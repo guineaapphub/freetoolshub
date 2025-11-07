@@ -1,412 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Candy Match Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f7f8fa;--panel:#fff;--ink:#111;--line:#e5e7eb;--accent:#3b82f6;
-  --sheet-bg:#fff;--border-color:#111;--border-width:2px;
+:root {
+  --bg: #f9fafb;
+  --ink: #111;
+  --card: #fff;
+  --border: #e5e7eb;
+  --accent: #3b82f6;
 }
-*{box-sizing:border-box}
-body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-a{color:var(--accent);text-decoration:none}
-.topbar{position:sticky;top:0;z-index:50;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
-.iconbtn{background:#111827;border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:8px 10px;margin-left:8px;cursor:pointer}
-.wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px}
-@media(max-width:1000px){.wrap{grid-template-columns:1fr}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
-h2.title{margin:0 0 6px 0;font-weight:800}
-h3{margin:10px 0 6px 0;font-size:13px;color:#555;text-transform:uppercase;letter-spacing:.4px}
-label{font-weight:600;font-size:13px}
-input[type=text],textarea,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-top:6px;font:inherit}
-input[type=color]{width:44px;height:36px;border:1px solid var(--line);border-radius:8px;padding:0}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:800}
-.btn.alt{background:#111;color:#fff}
-.small{font-size:12px;opacity:.7}
-.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;overflow:auto}
-.sheet{width:8.5in;height:11in;background:var(--sheet-bg);position:relative;margin:0 auto;box-shadow:0 0 10px rgba(0,0,0,.06);outline: var(--border-width) solid var(--border-color)}
-.sheet-inner{position:absolute;inset:.6in;display:flex;flex-direction:column;gap:.35in}
-.center{text-align:center}
-h1#printTitle{margin:0;font-size:34px;font-weight:800;color:#000}
-h4#printSubtitle{margin:0;font-size:16px;font-weight:600;color:#000}
-.content{display:grid;grid-template-columns:1fr 1fr;gap:.35in}
-.block{border:1px solid #111;padding:.22in;border-radius:8px}
-.block h2{margin:0 0 .15in 0;font-size:18px}
-.list{display:flex;flex-direction:column;gap:8px}
-.item{display:flex;gap:8px;align-items:center;font-size:14px}
-.item .label{min-width:22px;font-weight:800}
-.drag-img{position:absolute;top:1in;left:1in;width:1in;height:1in;cursor:move;user-select:none}
-/* ads */
-.ad-banner{width:100%;text-align:center;background:#f0f0f0;border:1px dashed #ccc;color:#777;font-size:14px;padding:8px 0;margin:10px 0}
-.side-ad{position:fixed;top:110px;width:160px;height:600px;background:#f5f5f5;border:1px dashed #ccc;text-align:center;padding-top:20px;font-size:12px;color:#777;z-index:20}
-.left-ad{left:10px} .right-ad{right:10px}
-@media(max-width:1100px){.side-ad{display:none}}
-/* locks */
-.locked{opacity:.5;pointer-events:none;position:relative}
-.lock-badge{position:absolute;top:-8px;right:-8px;background:#111;color:#fff;font-size:10px;padding:3px 6px;border-radius:8px}
-.notice{background:#f8fafc;border:1px solid #e5e7eb;padding:10px;border-radius:8px;margin:10px 0}
-/* modal */
-.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:200}
-.modal{background:#fff;color:#111;border-radius:14px;max-width:720px;width:92%;box-shadow:0 10px 40px rgba(0,0,0,.2)}
-.modal header,.modal footer{padding:12px 14px;border-bottom:1px solid #eee}
-.modal footer{border-top:1px solid #eee;border-bottom:none;display:flex;justify-content:flex-end;gap:8px}
-.modal .body{padding:14px}
-.tabs{display:flex;gap:8px;margin-bottom:10px}
-.tab{padding:8px 10px;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-weight:800}
-.tab.active{background:#0f172a;color:#fff;border-color:#0f172a}
-/* dark */
-.dark body{background:#111827;color:#e5e7eb}
-.dark .panel,.dark .stage{background:#0b1220;border-color:#1f2937}
-.dark input[type=text],.dark textarea,.dark select{background:#0f172a;border-color:#1f2937;color:#e5e7eb}
-.dark .modal{background:#0f172a;color:#e5e7eb}
-.dark .tab{border-color:#1f2937}.dark .tab.active{background:#1e293b}
+body {
+  font-family: Poppins, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  font-weight: 800;
+  font-size: 28px;
+  margin: 12px 0;
+  text-align: center;
+}
+.container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 780px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.05);
+}
+label {
+  font-weight: 600;
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-family: inherit;
+}
+button {
+  margin-top: 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover { opacity: 0.9; }
+.output {
+  margin-top: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  background: #eee;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.dark {
+  --bg: #111;
+  --ink: #f9fafb;
+  --card: #1f1f1f;
+  --border: #333;
+  --accent: #60a5fa;
+}
+.footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 13px;
+  opacity: .7;
+}
 </style>
 </head>
 <body>
-<!-- side ads -->
-<div class="side-ad left-ad" id="adLeft">Left Sidebar Ad</div>
-<div class="side-ad right-ad" id="adRight">Right Sidebar Ad</div>
+<div class="toggle" id="modeToggle">🌙 Dark Mode</div>
 
-<!-- top bar -->
-<div class="topbar">
-  <div><a href="https://guineaapphub.github.io/freetoolshub/" style="color:#fff;font-weight:800">← Printable Game Generator</a></div>
-  <div style="font-weight:800">Candy Match Generator</div>
-  <div>
-    <button class="iconbtn" id="themeBtn" title="Dark / Light">🌙</button>
-    <button class="iconbtn" id="settingsBtn" title="Settings & Upgrades">⚙️</button>
+<h1>🍬 Candy Match Generator</h1>
+
+<div class="container">
+  <label for="theme">Enter a Theme (e.g. Bible, Baby Shower, Christmas)</label>
+  <input id="theme" type="text" placeholder="Type your theme here...">
+
+  <label for="pairs">Add Candy and Phrase Pairs</label>
+  <textarea id="pairs" rows="6" placeholder="Example:&#10;Taste the Rainbow - Skittles&#10;Hungry? Why wait? - Snickers"></textarea>
+
+  <button onclick="generateGame()">Generate Printable</button>
+
+  <div id="output" class="output" style="display:none;">
+    <h2>Preview</h2>
+    <p id="preview"></p>
+    <button onclick="downloadPDF()">Download PDF</button>
   </div>
 </div>
 
-<!-- top ad -->
-<div class="ad-banner" id="adTop">Top Banner Ad</div>
-
-<div class="wrap">
-  <!-- LEFT: controls -->
-  <aside class="panel">
-    <h2 class="title">Game Setup</h2>
-
-    <h3>Title & Subtitle (Free)</h3>
-    <label>Title</label>
-    <input id="titleInput" type="text" value="BIBLE VERSE CANDY MATCH">
-    <label class="row" style="margin-top:6px"><input type="checkbox" id="hasSubtitle"> Add subtitle</label>
-    <input id="subtitleInput" type="text" placeholder="How to play… (optional)" style="display:none">
-
-    <h3>Lists</h3>
-    <label>Verses (1–25)</label>
-    <textarea id="versesBox" rows="6" placeholder="1) John 3:16&#10;2) Psalm 23:1"></textarea>
-    <label>Candies (A–Y)</label>
-    <textarea id="candiesBox" rows="6" placeholder="A) Snickers&#10;B) Skittles"></textarea>
-    <div class="row">
-      <button class="btn" id="applyLists">Apply</button>
-      <button class="btn alt" id="shuffleBtn">Shuffle</button>
-    </div>
-
-    <h3>Design (PRO PLUS)</h3>
-    <!-- Border mode -->
-    <div class="row">
-      <label>Border</label>
-      <select id="borderMode">
-        <option value="single" selected>Single (Free)</option>
-        <option value="double">Double (Pro Plus)</option>
-        <option value="decor">Decorative (Pro Plus)</option>
-      </select>
-    </div>
-
-    <!-- Double controls -->
-    <div id="doubleControls" class="locked">
-      <div class="lock-badge">PRO PLUS</div>
-      <div class="row">
-        <label>Outer</label><input type="color" id="outerColor" value="#ff4aa2">
-        <label>Width</label><input type="range" id="outerWidth" min="1" max="14" value="6">
-      </div>
-      <div class="row">
-        <label>Inner</label><input type="color" id="innerColor" value="#000000">
-        <label>Width</label><input type="range" id="innerWidth" min="1" max="10" value="2">
-      </div>
-    </div>
-
-    <!-- Decorative -->
-    <div id="decorControls" class="locked">
-      <div class="lock-badge">PRO PLUS</div>
-      <div class="row">
-        <label>Preset</label>
-        <select id="decorPreset">
-          <option value="polka">Polka Dots</option>
-          <option value="chevron">Chevron</option>
-          <option value="leaves">Leaves</option>
-        </select>
-        <label>Tint</label><input type="range" id="decorHue" min="0" max="360" value="0">
-      </div>
-      <div class="row">
-        <label>Upload frame</label><input id="frameUpload" type="file" accept=".svg,.png">
-      </div>
-    </div>
-
-    <h3>Fonts & Background (PRO PLUS)</h3>
-    <div class="row">
-      <label>Body font (Free)</label>
-      <select id="fontFree">
-        <option value="Poppins, sans-serif">Poppins</option>
-        <option value="Arial, Helvetica, sans-serif">Arial</option>
-        <option value="'Times New Roman', Times, serif">Times New Roman</option>
-        <option value="Georgia, serif">Georgia</option>
-        <option value="'Courier New', monospace">Courier New</option>
-      </select>
-    </div>
-
-    <div id="fontProControls" class="locked" style="margin-top:8px">
-      <div class="lock-badge">PRO PLUS</div>
-      <label>Full font list</label>
-      <select id="fontProSelect">
-        <optgroup label="Sans-Serif"><option>Open Sans, sans-serif</option><option>Roboto, sans-serif</option><option>Lato, sans-serif</option><option>Montserrat, sans-serif</option><option>Verdana, sans-serif</option></optgroup>
-        <optgroup label="Serif"><option>Georgia, serif</option><option>Garamond, serif</option><option>Merriweather, serif</option></optgroup>
-        <optgroup label="Mono"><option>'Courier New', monospace</option><option>Consolas, monospace</option></optgroup>
-      </select>
-      <div class="row"><label>Upload font</label><input id="fontUpload" type="file" accept=".ttf,.otf,.woff,.woff2"></div>
-      <div class="row"><label>Background</label><input id="bgUpload" type="file" accept=".png,.jpg,.jpeg,.svg"><label>Opacity</label><input id="bgOpacity" type="range" min="0.6" max="1" step="0.02" value="1"></div>
-    </div>
-
-    <h3>Icons / Clipart (PRO PLUS)</h3>
-    <div id="iconControls" class="locked">
-      <div class="lock-badge">PRO PLUS</div>
-      <input id="iconUpload" type="file" multiple accept=".png,.svg">
-      <p class="small">Drag anywhere on the page.</p>
-    </div>
-
-    <h3>Print</h3>
-    <div class="row">
-      <label>Paper</label>
-      <select id="paperSize"><option value="letter" selected>Letter (8.5×11")</option><option value="a4">A4</option></select>
-      <button class="btn" id="downloadPDF">Download PDF (Game + Answers)</button>
-    </div>
-
-    <h3>Bundle PDFs (PRO PLUS)</h3>
-    <div id="bundleControls" class="locked">
-      <div class="lock-badge">PRO PLUS</div>
-      <input id="bundleUpload" type="file" accept="application/pdf" multiple>
-      <button class="btn alt" id="bundleMergeBtn">Merge</button>
-      <p class="small">Merges PDFs from tools where you own PRO PLUS.</p>
-    </div>
-
-  </aside>
-
-  <!-- RIGHT: preview -->
-  <main class="stage">
-    <div id="sheet" class="sheet">
-      <div class="sheet-inner">
-        <div class="center">
-          <h1 id="printTitle">BIBLE VERSE CANDY MATCH</h1>
-          <h4 id="printSubtitle" style="display:none">Match each Bible verse to the candy.</h4>
-        </div>
-        <div class="content">
-          <section class="block">
-            <h2>Verses (write the candy letter)</h2>
-            <div id="versesList" class="list"></div>
-          </section>
-          <section class="block">
-            <h2>Candies</h2>
-            <div id="candiesList" class="list"></div>
-          </section>
-        </div>
-      </div>
-    </div>
-    <div class="ad-banner" id="adBottom" style="margin-top:12px">Footer Banner Ad</div>
-  </main>
+<div class="footer">
+  <p>© 2025 Printable Game Generator</p>
 </div>
 
-<!-- Settings modal -->
-<div class="modal-back" id="settingsBack">
-  <div class="modal" role="dialog" aria-modal="true">
-    <header style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-weight:800">Settings & Upgrades</div>
-      <button class="iconbtn" id="closeSettings">✖</button>
-    </header>
-    <div class="body">
-      <div class="tabs">
-        <div class="tab active" data-tab="pro">PRO ($27)</div>
-        <div class="tab" data-tab="proplus">PRO PLUS ($67)</div>
-        <div class="tab" data-tab="api">API</div>
-      </div>
-
-      <div class="tabpane" id="tab-pro">
-        <div class="notice">
-          <b>PRO — $27</b><br>
-          Remove ads on this tool and unlock API key access (Gemini / OpenAI / HF).<br><br>
-          <a class="btn" id="buyPro" href="https://YOUR-GROOVESELL-PRO-27" target="_blank">Upgrade to PRO</a>
-        </div>
-        <p class="small">Ads are hidden while this window is open for AdSense compliance.</p>
-      </div>
-
-      <div class="tabpane" id="tab-proplus" style="display:none">
-        <div class="notice">
-          <b>PRO PLUS — $67</b><br>
-          Includes PRO + decorative borders, frames (and upload), icons/clipart drag-drop, full fonts (and upload), background upload, and Bundle PDF.<br><br>
-          <a class="btn" id="buyProPlus" href="https://YOUR-GROOVESELL-PROPLUS-67" target="_blank">Upgrade to PRO PLUS</a>
-        </div>
-        <p class="small">Commercial License: create & sell outputs (PDFs, books, printables) on Etsy/KDP/your store.</p>
-      </div>
-
-      <div class="tabpane" id="tab-api" style="display:none">
-        <label>Provider</label>
-        <select id="providerSel"><option value="gemini">Gemini</option><option value="openai">OpenAI</option><option value="huggingface">Hugging Face</option></select>
-        <label style="margin-top:8px">API key</label>
-        <input id="apiKeyBox" type="text" placeholder="Paste key (PRO or PRO PLUS)">
-        <div class="notice">To get a Gemini API Key: Google AI Studio → “Get API Key” → “Create API Key”. Keys are stored in your browser only.</div>
-        <div class="row"><button class="btn" id="saveKeyBtn">Save Key</button><button class="btn alt" id="clearKeyBtn">Clear Key</button></div>
-      </div>
-    </div>
-    <footer><button class="btn alt" id="closeSettings2">Close</button></footer>
-  </div>
-</div>
-
-<!-- libs -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-/* ---------- helpers ---------- */
-const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-const TOOL_KEY="candymatch"; const K_PRO=TOOL_KEY+"_pro", K_PLUS=TOOL_KEY+"_proplus", K_HUB="pg_hub_paid";
-const hasProPlus=()=>localStorage.getItem(K_PLUS)==="true";
-const hasPro=()=>hasProPlus()||localStorage.getItem(K_PRO)==="true";
-function unlockPro(){localStorage.setItem(K_PRO,"true");localStorage.setItem(K_HUB,"true");applyLocks();applyAds();}
-function unlockProPlus(){localStorage.setItem(K_PLUS,"true");localStorage.setItem(K_PRO,"true");localStorage.setItem(K_HUB,"true");applyLocks();applyAds();}
-function applyAds(){const show=!(hasPro());["adTop","adBottom","adLeft","adRight"].forEach(id=>{const el=$("#"+id); if(el) el.style.display=show?"":"none";});}
-function applyLocks(){const locked=!hasProPlus();["doubleControls","decorControls","fontProControls","iconControls","bundleControls"].forEach(id=>{const el=$("#"+id); if(el) el.classList.toggle("locked",locked);});}
-applyAds(); applyLocks();
+const { jsPDF } = window.jspdf;
 
-/* theme */
-function setTheme(t){document.documentElement.classList.toggle("dark",t==="dark");}
-setTheme(localStorage.getItem("cm_theme")||"light");
-$("#themeBtn").onclick=()=>{const t=(localStorage.getItem("cm_theme")||"light")==="light"?"dark":"light";localStorage.setItem("cm_theme",t);setTheme(t);};
+function generateGame() {
+  const theme = document.getElementById("theme").value.trim();
+  const pairsText = document.getElementById("pairs").value.trim();
+  if (!theme || !pairsText) {
+    alert("Please enter a theme and at least one candy match!");
+    return;
+  }
 
-/* settings modal */
-const back=$("#settingsBack");
-function openSettings(){back.style.display="flex";["adLeft","adRight"].forEach(id=>{const e=$("#"+id); if(e) e.style.visibility="hidden";});}
-function closeSettings(){back.style.display="none";["adLeft","adRight"].forEach(id=>{const e=$("#"+id); if(e) e.style.visibility="visible";});}
-$("#settingsBtn").onclick=openSettings; $("#closeSettings").onclick=closeSettings; $("#closeSettings2").onclick=closeSettings;
-$$(".tab").forEach(t=>t.onclick=()=>{$$(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");$$(".tabpane").forEach(p=>p.style.display="none");$("#tab-"+t.dataset.tab).style.display="";});
-$("#buyPro").onclick=()=>{/* go to checkout */};
-$("#buyProPlus").onclick=()=>{/* go to checkout */};
+  const lines = pairsText.split("\n").map(l => l.trim()).filter(Boolean);
+  let html = `<h3>${theme} Candy Match</h3><ol>`;
+  lines.forEach(line => {
+    const [phrase, candy] = line.split(" - ");
+    html += `<li>${phrase || ""} — <b>${candy || ""}</b></li>`;
+  });
+  html += "</ol>";
 
-/* API tab */
-function applyApiUI(){const key=localStorage.getItem("cm_api_key")||""; $("#apiKeyBox").value=key;}
-applyApiUI();
-$("#saveKeyBtn").onclick=()=>{ if(!hasPro()){openSettings();$$('.tab[data-tab="pro"]')[0].click(); return;}
-localStorage.setItem("cm_api_key", $("#apiKeyBox").value.trim()); alert("API key saved locally.");};
-$("#clearKeyBtn").onclick=()=>{localStorage.removeItem("cm_api_key");applyApiUI();};
-
-/* title & subtitle (free: plain only) */
-const titleH=$("#printTitle"), subH=$("#printSubtitle");
-$("#titleInput").oninput=e=>titleH.textContent=(e.target.value||"").toUpperCase();
-$("#hasSubtitle").onchange=e=>subH.style.display=e.target.checked?"":"none";
-$("#subtitleInput").oninput=e=>subH.textContent=e.target.value;
-$("#hasSubtitle").addEventListener("change",()=>{ if($("#hasSubtitle").checked && !$("#subtitleInput").value) $("#subtitleInput").value="Match each Bible verse to the candy."; $("#subtitleInput").style.display=$("#hasSubtitle").checked?"":"none";});
-
-/* lists + render */
-const versesHost=$("#versesList"), candiesHost=$("#candiesList");
-function parseLines(t){return t.split(/\r?\n/).map(x=>x.replace(/^\d+\)|^[A-Z]\)|[-•]\s*/,'').trim()).filter(Boolean)}
-function renderLists(vs,cs){
-  versesHost.innerHTML=""; candiesHost.innerHTML="";
-  vs.slice(0,25).forEach((txt,i)=>{const row=document.createElement("div");row.className="item";
-    row.innerHTML=`<div class="label">${i+1})</div><div>${txt}</div>`; versesHost.appendChild(row);});
-  const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  cs.slice(0,25).forEach((txt,i)=>{const row=document.createElement("div");row.className="item";
-    row.innerHTML=`<div class="label">${A[i]})</div><div>${txt}</div>`; candiesHost.appendChild(row);});
+  document.getElementById("preview").innerHTML = html;
+  document.getElementById("output").style.display = "block";
 }
-$("#applyLists").onclick=()=>{const v=parseLines($("#versesBox").value), c=parseLines($("#candiesBox").value); if(!v.length||!c.length){alert("Add some verses and candies first.");return;} renderLists(v,c);}
-$("#shuffleBtn").onclick=()=>{const v=parseLines($("#versesBox").value), c=parseLines($("#candiesBox").value); if(!v.length||!c.length){alert("Add lists first, then shuffle.");return;} const sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); renderLists(sh(v), sh(c));}
 
-/* FREE border, PRO PLUS double/decor */
-const sheet=$("#sheet");
-const presets={polka:'polka',chevron:'chevron',leaves:'leaves'};
-function enforceFreeBorder(){sheet.style.outline="var(--border-width) solid var(--border-color)"; sheet.classList.remove("has-frame"); sheet.style.setProperty("--outer-w",""); sheet.style.setProperty("--inner-w","");}
-function applyDouble(){sheet.style.outline="none"; sheet.style.boxShadow=`inset 0 0 0 ${$("#outerWidth").value}px ${$("#outerColor").value}, inset 0 0 0 calc(${$("#outerWidth").value}px + ${$("#innerWidth").value}px) ${$("#innerColor").value}`;}
-function applyDecor(){
-  sheet.classList.add("has-frame");
-  const p=$("#decorPreset").value;
-  let uri="";
-  if(p==="polka"){uri=`url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="p" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.6" fill=%22%23ffffff%22/></pattern></defs><rect width="100%" height="100%" fill=%22%23ff69b4%22/><rect x="4" y="4" width="92" height="92" fill=none stroke=%22%23000%22 stroke-width=1.5/><rect width="100%" height="100%" fill=%22url(%23p)%22 opacity=.35/></svg>')`; }
-  if(p==="chevron"){uri=`url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="ch" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0 8 L4 4 L8 8" stroke=%22%23ffffff%22 stroke-width=2 fill=none/></pattern></defs><rect width="100%" height="100%" fill=%22%23ffa500%22/><rect x="4" y="4" width="92" height="92" fill=none stroke=%22%23000%22 stroke-width=1.5/><rect width="100%" height="100%" fill=%22url(%23ch)%22 opacity=.35/></svg>')`; }
-  if(p==="leaves"){uri=`url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="lv" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 C2 2, 6 2, 8 6 C6 10, 2 10, 0 6z" fill=%22%23ffffff%22 opacity=.6/></pattern></defs><rect width="100%" height="100%" fill=%22%2386b91a%22/><rect x="4" y="4" width="92" height="92" fill=none stroke=%22%23000%22 stroke-width=1.5/><rect width="100%" height="100%" fill=%22url(%23lv)%22/></svg>')`; }
-  sheet.style.backgroundImage = uri; sheet.style.backgroundSize="cover"; sheet.style.backgroundPosition="center";
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const content = document.getElementById("preview").innerText;
+  doc.text(content, 40, 60);
+  doc.save("candy-match.pdf");
 }
-$("#borderMode").onchange=()=>{if($("#borderMode").value==="single"){enforceFreeBorder()} else { if(!hasProPlus()){openSettings();$$('.tab[data-tab="proplus"]')[0].click(); $("#borderMode").value="single"; return;} if($("#borderMode").value==="double"){applyDouble()} if($("#borderMode").value==="decor"){applyDecor()} }};
-["outerColor","innerColor","outerWidth","innerWidth"].forEach(id=>{ const el=$("#"+id); if(el) el.oninput=()=>{ if(hasProPlus() && $("#borderMode").value==="double") applyDouble(); }});
-["decorPreset"].forEach(id=>{ const el=$("#"+id); if(el) el.oninput=()=>{ if(hasProPlus() && $("#borderMode").value==="decor") applyDecor(); }});
-$("#frameUpload").onchange=e=>{ if(!hasProPlus()){openSettings();$$('.tab[data-tab="proplus"]')[0].click(); return;} const f=e.target.files?.[0]; if(!f) return; const url=URL.createObjectURL(f); sheet.style.backgroundImage=`url(${url})`; sheet.style.backgroundSize="cover"; sheet.style.backgroundPosition="center" };
 
-/* fonts/background (free selects basic font; pro plus expands) */
-const sheetInner=$(".sheet-inner");
-$("#fontFree").onchange=e=>{ sheetInner.style.fontFamily=e.target.value; }
-$("#fontProSelect").onchange=e=>{ if(!hasProPlus()){openSettings();$$('.tab[data-tab="proplus"]')[0].click(); return;} sheetInner.style.fontFamily=e.target.value; }
-$("#fontUpload").onchange=async e=>{ if(!hasProPlus()){openSettings();$$('.tab[data-tab="proplus"]')[0].click(); return;}
-  const f=e.target.files?.[0]; if(!f) return; const buf=await f.arrayBuffer(); const url=URL.createObjectURL(new Blob([buf])); const name="UserFont"+Date.now(); const face=new FontFace(name,`url(${url})`); await face.load(); document.fonts.add(face); sheetInner.style.fontFamily=`'${name}', ${sheetInner.style.fontFamily||'Poppins,sans-serif'}`;}
-$("#bgUpload").onchange=e=>{ if(!hasProPlus()){openSettings();$$('.tab[data-tab="proplus"]')[0].click(); return;} const f=e.target.files?.[0]; if(!f) return; sheet.style.backgroundImage=`url(${URL.createObjectURL(f)})`; sheet.style.backgroundSize="cover"; sheet.style.backgroundPosition="center";}
-$("#bgOpacity").oninput=e=>{ if(hasProPlus()) sheet.style.opacity=e.target.value; }
-
-/* icons (pro plus only) */
-const iconUpload=$("#iconUpload"); let dragging=null,offX=0,offY=0;
-iconUpload.onclick=e=>{ if(!hasProPlus()){ e.preventDefault(); openSettings(); $$('.tab[data-tab="proplus"]')[0].click(); } };
-iconUpload.onchange=e=>{ if(!hasProPlus()) return; Array.from(e.target.files||[]).forEach(f=>{const img=document.createElement("img"); img.src=URL.createObjectURL(f); img.className="drag-img"; sheet.appendChild(img);
-  img.onmousedown=ev=>{dragging=img; offX=ev.offsetX;offY=ev.offsetY};});}
-window.onmousemove=e=>{ if(!dragging) return; const r=sheet.getBoundingClientRect(); let x=e.clientX-r.left-offX, y=e.clientY-r.top-offY; x=Math.max(0,Math.min(x,r.width-dragging.offsetWidth)); y=Math.max(0,Math.min(y,r.height-dragging.offsetHeight)); dragging.style.left=x+"px"; dragging.style.top=y+"px";}
-window.onmouseup=()=>dragging=null;
-
-/* export two-page PDF (answers in red) */
-function sizeMap(k){return {letter:{w:8.5,h:11,cssW:"8.5in",cssH:"11in"}, a4:{w:8.27,h:11.69,cssW:"8.27in",cssH:"11.69in"}}[k]||{w:8.5,h:11,cssW:"8.5in",cssH:"11in"};}
-$("#downloadPDF").onclick=async ()=>{
-  const S=sizeMap($("#paperSize").value);
-  const page=$("#sheet"); const oldW=page.style.width, oldH=page.style.height, oldOp=page.style.opacity;
-  page.style.width=S.cssW; page.style.height=S.cssH; page.style.opacity="1"; // force white
-  // PAGE 1 (game)
-  const cv1 = await html2canvas(page,{backgroundColor:"#ffffff",scale:2});
-  const img1 = cv1.toDataURL("image/png");
-  // PAGE 2 (answers) — mark letters in red
-  const clone = page.cloneNode(true);
-  // change title
-  clone.querySelector("#printTitle").textContent = ( $("#titleInput").value || "CANDY MATCH") + " — ANSWERS";
-  clone.querySelector("#printTitle").style.color = "#d00000";
-  // add red letters for verses: preprend [A)] pattern as sample mapping
-  const vNodes = clone.querySelectorAll("#versesList .item .label");
-  const cNodes = clone.querySelectorAll("#candiesList .item .label");
-  // simple mapping A..Z to 1..; we keep lists as-is—this is a printable key visual
-  vNodes.forEach((n,i)=>{n.style.color="#d00000";});
-  // render second page
-  document.body.appendChild(clone); clone.style.position="fixed"; clone.style.left="-9999px";
-  const cv2 = await html2canvas(clone,{backgroundColor:"#ffffff",scale:2});
-  const img2 = cv2.toDataURL("image/png");
-  clone.remove();
-
-  const { jsPDF } = window.jspdf; const pdf=new jsPDF({orientation:S.w>S.h?"landscape":"portrait",unit:"in",format:[S.w,S.h]});
-  pdf.addImage(img1,"PNG",0,0,S.w,S.h); pdf.addPage([S.w,S.h]); pdf.addImage(img2,"PNG",0,0,S.w,S.h);
-  pdf.save("CandyMatch_Game_Answers.pdf");
-  page.style.width=oldW; page.style.height=oldH; page.style.opacity=oldOp;
-};
-
-/* bundle (pro plus only; user chooses PDFs) */
-$("#bundleMergeBtn").onclick=async ()=>{
-  if(!hasProPlus()) {openSettings(); $$('.tab[data-tab="proplus"]')[0].click(); return;}
-  const files=Array.from($("#bundleUpload").files||[]); if(!files.length){alert("Upload PDFs to merge.");return;}
-  const merged=await PDFLib.PDFDocument.create();
-  for(const f of files){ const bytes=await f.arrayBuffer(); const donor=await PDFLib.PDFDocument.load(bytes); const pages=await merged.copyPages(donor, donor.getPageIndices()); pages.forEach(p=>merged.addPage(p)); }
-  const out=await merged.save(); const blob=new Blob([out],{type:"application/pdf"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="Bundle_Printables.pdf"; a.click();
-};
-
-/* init defaults */
-(function(){
-  const sampleV=["John 3:16","Psalm 23:1","Romans 8:28","Jeremiah 29:11","Proverbs 3:5","Genesis 1:1","Isaiah 40:31","Philippians 4:13","Matthew 5:9","Psalm 118:24","Ephesians 2:8","Hebrews 11:1","1 John 4:19","James 1:5","Psalm 27:1","Joshua 1:9","Matthew 6:33","Romans 12:2","1 Peter 5:7","Psalm 46:10","Proverbs 18:10","Galatians 5:22","Colossians 3:23","Luke 6:31","John 14:6"];
-  const sampleC=["Snickers","Skittles","Twix","KitKat","M&M’s","Reese’s","Milky Way","Hershey’s","Starburst","Tootsie Roll","Butterfinger","Smarties","Airheads","Nerds","Jelly Beans","Crunch","Sour Patch","York Peppermint","Baby Ruth","Whoppers","Rolo","Dove","Almond Joy","PayDay","3 Musketeers"];
-  $("#versesBox").value=sampleV.map((v,i)=>`${i+1}) ${v}`).join("\n");
-  $("#candiesBox").value=sampleC.map((v,i)=>`${String.fromCharCode(65+i)}) ${v}`).join("\n");
-  renderLists(sampleV,sampleC);
-  enforceFreeBorder();
-})();
+document.getElementById("modeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  const isDark = document.body.classList.contains("dark");
+  document.getElementById("modeToggle").innerText = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+});
 </script>
 </body>
 </html>
