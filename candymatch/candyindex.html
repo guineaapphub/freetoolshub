@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Candy Match Generator 🍬</title>
+<style>
+  :root {
+    --candy1:#f6d5e3;
+    --candy2:#d2e8f7;
+    --candy3:#fde6c4;
+    --dark:#181a20;
+    --light:#ffffff;
+    --accent:#5b7bfa;
+  }
+  body {
+    margin:0;
+    font-family: 'Poppins', sans-serif;
+    background:var(--light);
+    color:#333;
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+  }
+  body.dark {
+    background:var(--dark);
+    color:#f1f1f1;
+  }
+  .sidebar {
+    width:340px;
+    background:linear-gradient(180deg,var(--candy1),var(--candy2));
+    padding:1.2rem;
+    overflow-y:auto;
+    box-shadow:2px 0 10px rgba(0,0,0,0.1);
+  }
+  body.dark .sidebar {
+    background:#222;
+  }
+  .header {
+    font-size:1.5rem;
+    font-weight:700;
+    color:#222;
+    margin-bottom:1rem;
+  }
+  body.dark .header{color:#fff;}
+  label{
+    display:block;
+    margin-top:1rem;
+    font-weight:600;
+  }
+  input[type=text],select{
+    width:100%;
+    padding:0.6rem;
+    border-radius:6px;
+    border:1px solid #ccc;
+    margin-top:0.4rem;
+    font-size:0.95rem;
+  }
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    margin-top:1rem;
+    justify-content:space-between;
+  }
+  .toggle-row span{font-weight:600;}
+  button{
+    width:100%;
+    padding:0.8rem;
+    margin-top:0.8rem;
+    border:none;
+    border-radius:6px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .generate{
+    background:var(--accent);
+    color:#fff;
+  }
+  .clean{
+    background:#888;
+    color:#fff;
+  }
+  .download{
+    background:#6fcf97;
+    color:#fff;
+  }
+  .main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    background:var(--light);
+    transition:background .3s;
+  }
+  body.dark .main{background:#1c1e24;}
+  .toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0.6rem 1rem;
+    border-bottom:1px solid #ddd;
+  }
+  body.dark .toolbar{border-bottom:1px solid #333;}
+  .toggle-theme{
+    background:none;
+    border:none;
+    color:inherit;
+    cursor:pointer;
+    font-size:1rem;
+    font-weight:600;
+  }
+  .preview{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fafafa;
+  }
+  body.dark .preview{background:#2a2d36;}
+  .page{
+    width:700px;
+    height:900px;
+    background:#fff;
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
+    padding:1.5rem 2rem;
+  }
+  .page h1{
+    text-align:center;
+    font-size:1.8rem;
+    font-weight:900;
+    color:#333;
+    -webkit-text-stroke:1px #000;
+    background:linear-gradient(to right,#fcb6c1,#a2d4f2);
+    -webkit-background-clip:text;
+    color:transparent;
+  }
+  .clues{
+    display:flex;
+    justify-content:space-between;
+    margin-top:1rem;
+    font-size:0.95rem;
+  }
+  footer{
+    text-align:center;
+    padding:0.5rem;
+    font-size:0.8rem;
+    color:#666;
+  }
+  .locked{
+    opacity:0.5;
+    position:relative;
+  }
+  .locked::after{
+    content:"🔒 Pro Plus Only";
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#000a;
+    color:#fff;
+    padding:0.4rem 0.6rem;
+    border-radius:6px;
+    font-size:0.8rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="header">Candy Match Generator</div>
+
+  <label>Theme / Topic</label>
+  <input type="text" placeholder="e.g. Bible Verse">
+
+  <label>Style / Audience</label>
+  <select>
+    <option>Kids (Themed)</option>
+    <option>General (Adults)</option>
+  </select>
+
+  <div class="toggle-row">
+    <span>⭐ Bonus: Bible Cross-Match</span>
+    <input type="checkbox" id="crossToggle">
+  </div>
+
+  <button class="clean">🪄 Clean & Sort</button>
+  <button class="generate">🎯 Generate Game</button>
+  <button class="download">⬇️ Download PDF</button>
+
+  <label>Page Size</label>
+  <select>
+    <option>Letter (8.5 x 11")</option>
+    <option>A4</option>
+  </select>
+
+  <label>Upload .txt (Pro Plus)</label>
+  <div class="locked"><button>📤 Upload .txt</button></div>
+
+  <label><input type="checkbox" checked> Include Answer Key</label>
+
+</div>
+
+<!-- Main Panel -->
+<div class="main">
+  <div class="toolbar">
+    <span>Preview</span>
+    <button class="toggle-theme" id="modeToggle">🌗 Toggle Theme</button>
+  </div>
+  <div class="preview">
+    <div class="page">
+      <h1>BIBLE CANDY MATCH</h1>
+      <p style="text-align:center;font-weight:600;">
+        Match the Bible verse to the correct candy clue!
+      </p>
+
+      <div class="clues">
+        <div>
+          1. Luke 9:24<br>
+          2. Proverbs 24:26<br>
+          3. Genesis 9:15<br>
+          4. Mark 1:17<br>
+          5. Psalm 18:2
+        </div>
+        <div style="text-align:right;">
+          A. Skittles<br>
+          B. Butterfinger<br>
+          C. PayDay<br>
+          D. Reese’s Pieces<br>
+          E. Life Savers
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    Made with <b>The Printable Generator</b> – a Guinea App Hub product.
+  </footer>
+</div>
+
+<script>
+  const toggle=document.getElementById('modeToggle');
+  toggle.addEventListener('click',()=>document.body.classList.toggle('dark'));
+</script>
+
+</body>
+</html>
