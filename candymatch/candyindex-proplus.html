@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Candy Match Generator – Pro Plus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --blue: #2563eb;
+      --green: #22c55e;
+      --gold: #facc15;
+      --ink: #0f172a;
+      --muted: #6b7280;
+      --preview-bg: #ffffff;
+      --line-color: #111827;
+      --row-gap: 8px;
+      --grid-size: 24px;
+      --grid-opacity: 0.2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: #e5e7eb;
+      color: var(--ink);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    body.dark {
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .sidebar {
+      width: 360px;
+      background: linear-gradient(180deg, #e0f2fe, #eef2ff);
+      border-right: 1px solid #d4d4ff;
+      padding: 12px 14px 80px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    body.dark .sidebar {
+      background: #020617;
+      border-color: #111827;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+
+    .tier-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #92400e;
+      background: #fef3c7;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      margin-bottom: 10px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: none;
+      background: var(--blue);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    input[type="text"],
+    select,
+    textarea,
+    input[type="number"] {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      margin-bottom: 8px;
+      outline: none;
+      background: #ffffff;
+    }
+
+    body.dark input[type="text"],
+    body.dark select,
+    body.dark textarea,
+    body.dark input[type="number"] {
+      background: #020617;
+      color: #e5e7eb;
+      border-color: #1e293b;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      transition: transform 0.05s ease, box-shadow 0.05s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-blue {
+      background: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(34, 197, 94, 0.25);
+    }
+
+    .btn-gray {
+      background: #6b7280;
+      color: #f9fafb;
+    }
+
+    .btn-small {
+      width: auto;
+      padding: 5px 8px;
+      font-size: 11px;
+      border-radius: 999px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-top: 2px;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-row input {
+      width: 16px;
+      height: 16px;
+    }
+
+    .hint {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 0;
+      margin-bottom: 6px;
+    }
+
+    body.dark .hint {
+      color: #9ca3af;
+    }
+
+    .panel {
+      border-radius: 12px;
+      background: #eff6ff;
+      padding: 8px 9px 10px;
+      margin-bottom: 10px;
+      border: 1px solid #dbeafe;
+    }
+
+    body.dark .panel {
+      background: #020617;
+      border-color: #111827;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .row label {
+      margin-bottom: 0;
+    }
+
+    .slider {
+      width: 100%;
+    }
+
+    .file-input {
+      font-size: 11px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px;
+    }
+
+    .preview-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .toolbar-label {
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .preview-wrapper {
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22);
+      overflow: auto;
+      height: 100%;
+    }
+
+    body.dark .preview-wrapper {
+      background: #020617;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.75);
+    }
+
+    .preview-page {
+      margin: 0 auto;
+      background: var(--preview-bg);
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 11 / 8.5;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 0 0 6px #ffffff;
+      padding: 48px 72px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 0;
+    }
+
+    .preview-border {
+      position: absolute;
+      inset: 12px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .border-none {
+      border-color: transparent;
+    }
+
+    .border-simple {
+      border-color: #f97316;
+    }
+
+    .border-candy {
+      border-style: dashed;
+      border-width: 4px;
+      border-color: #fb7185;
+    }
+
+    .border-dotted {
+      border-style: dotted;
+      border-width: 3px;
+      border-color: #22c55e;
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(148, 163, 184, 0.5) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.5) 1px, transparent 1px);
+      background-size: var(--grid-size) var(--grid-size);
+      opacity: var(--grid-opacity);
+      pointer-events: none;
+      z-index: 1;
+      display: none;
+    }
+
+    .game-title {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      cursor: move;
+      user-select: none;
+      position: relative;
+    }
+
+    .game-subtitle {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      cursor: move;
+      user-select: none;
+      position: relative;
+    }
+
+    .game-body {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 28px;
+      font-size: 14px;
+      flex: 1;
+      align-items: flex-start;
+    }
+
+    .game-body.swap {
+      grid-template-columns: 0.9fr 1.2fr;
+    }
+
+    .clues-wrapper {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--row-gap);
+    }
+
+    .clue-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      column-gap: 4px;
+    }
+
+    .clue-num {
+      width: 26px;
+      font-weight: 600;
+    }
+
+    .clue-row.hide-nums .clue-num {
+      visibility: hidden;
+    }
+
+    .clue-line {
+      border-bottom: 1px solid var(--line-color);
+      margin-top: 2px;
+      grid-column: 2 / span 1;
+    }
+
+    .clue-line.dotted {
+      border-bottom-style: dotted;
+    }
+
+    .answers-list {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--row-gap);
+    }
+
+    .answers-list div {
+      margin-bottom: 0;
+    }
+
+    .answer-label {
+      width: 18px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .answer-key {
+      margin-top: 16px;
+      border-top: 1px dashed #d1d5db;
+      padding-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .answer-key h4 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .answer-key-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .answer-key-row span {
+      min-width: 80px;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+      .sidebar {
+        display: none !important;
+      }
+      .main {
+        padding: 0;
+      }
+      .preview-wrapper {
+        padding: 0;
+        box-shadow: none;
+      }
+      .preview-page {
+        border: none;
+        box-shadow: none;
+        max-width: none;
+        aspect-ratio: auto;
+        padding: 40px 56px;
+      }
+      .grid-overlay {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="header-row">
+      <div>
+        <h1>Candy Match Generator</h1>
+        <div class="tier-tag">👑 Pro Plus</div>
+      </div>
+      <button id="modeToggle" class="mode-toggle" title="Toggle light/dark UI">
+        🌙
+      </button>
+    </div>
+
+    <!-- Theme / Topic -->
+    <label for="themeInput">Theme / Topic</label>
+    <input
+      id="themeInput"
+      type="text"
+      placeholder="e.g. Bible verses, Baby Shower, Christmas"
+    />
+
+    <label for="styleSelect">Style / Audience</label>
+    <select id="styleSelect">
+      <option value="kids">Kids (Themed)</option>
+      <option value="general">General (For Adults)</option>
+    </select>
+
+    <!-- Bonus Cross-Match -->
+    <div class="panel">
+      <div class="panel-title">⭐ Bonus Bible Cross-Match Mode</div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="crossMatchToggle" />
+        <label for="crossMatchToggle" style="margin-bottom:0;">
+          Enable Bible Verses + Any Niche
+        </label>
+      </div>
+      <p class="hint">
+        When enabled, the left column uses Bible verses and the right column uses another
+        theme (Halloween, Christmas, Easter, etc.). Your title auto-updates.
+      </p>
+
+      <label for="bibleTheme" id="bibleThemeLabel" style="display:none;">
+        Bible Verses / Scripture
+      </label>
+      <input
+        id="bibleTheme"
+        type="text"
+        placeholder="e.g. Bible verses about courage"
+        style="display:none;"
+      />
+
+      <label for="secondaryTheme" id="secondaryThemeLabel" style="display:none;">
+        Cross-Match Theme (e.g. Halloween, Christmas)
+      </label>
+      <input
+        id="secondaryTheme"
+        type="text"
+        placeholder="e.g. Halloween, Christmas, Easter"
+        style="display:none;"
+      />
+    </div>
+
+    <!-- Manual Word List -->
+    <div class="panel">
+      <div class="panel-title">Manual Word List</div>
+      <p class="hint">
+        Combine your own words with AI suggestions. One item per line. Works for clues or
+        themed words.
+      </p>
+      <textarea
+        id="manualList"
+        placeholder="Type or paste words here (one per line)..."
+      ></textarea>
+
+      <label for="uploadTxt">Upload .txt (one item per line)</label>
+      <input id="uploadTxt" type="file" accept=".txt" class="file-input" />
+    </div>
+
+    <!-- Title & Fonts -->
+    <div class="panel">
+      <div class="panel-title">Title &amp; Fonts</div>
+
+      <label for="titleInput">Game Title</label>
+      <input id="titleInput" type="text" placeholder="e.g. Bible Candy Match" />
+
+      <label for="subtitleInput">Subtitle</label>
+      <input
+        id="subtitleInput"
+        type="text"
+        placeholder="Match the clue to the candy it describes!"
+      />
+
+      <div class="row">
+        <label for="fontSelect" style="width:80px;">Font</label>
+        <select id="fontSelect">
+          <option value="system-ui">System Default</option>
+          <option value="Arial, sans-serif">Arial</option>
+          <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Georgia', serif">Georgia</option>
+          <option value="'Comic Sans MS', cursive">Comic (Kids)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="titleSize" style="width:80px;">Title Size</label>
+        <input
+          id="titleSize"
+          type="range"
+          min="22"
+          max="40"
+          value="30"
+          class="slider"
+        />
+      </div>
+
+      <div class="row">
+        <label for="fillColor" style="width:80px;">Fill</label>
+        <input id="fillColor" type="color" value="#111827" />
+        <label for="outlineColor" style="width:60px;">Outline</label>
+        <input id="outlineColor" type="color" value="#4b5563" />
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="shadowToggle" />
+        <label for="shadowToggle" style="margin-bottom:0;">Soft shadow</label>
+      </div>
+
+      <p class="hint">
+        Drag the title and subtitle on the preview page to reposition them.
+      </p>
+    </div>
+
+    <!-- Layout & Lines -->
+    <div class="panel">
+      <div class="panel-title">Layout &amp; Lines</div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="swapColumns" />
+        <label for="swapColumns" style="margin-bottom:0;">Swap columns</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="showNumbers" checked />
+        <label for="showNumbers" style="margin-bottom:0;">Show clue numbers</label>
+      </div>
+
+      <div class="row">
+        <label for="lineStyle" style="width:80px;">Line Style</label>
+        <select id="lineStyle">
+          <option value="solid">Solid</option>
+          <option value="dotted">Dotted</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="lineSpacing" style="width:80px;">Line Spacing</label>
+        <input
+          id="lineSpacing"
+          type="range"
+          min="4"
+          max="16"
+          value="8"
+          class="slider"
+        />
+      </div>
+
+      <div class="row">
+        <label for="rowCount" style="width:80px;">Rows</label>
+        <input
+          id="rowCount"
+          type="number"
+          min="5"
+          max="15"
+          value="10"
+          style="width:80px;"
+        />
+        <button id="shuffleBtn" class="btn btn-gray btn-small" type="button">
+          Shuffle Pairs
+        </button>
+      </div>
+    </div>
+
+    <!-- Borders & Background -->
+    <div class="panel">
+      <div class="panel-title">Borders &amp; Background</div>
+
+      <div class="row">
+        <label for="borderStyle" style="width:90px;">Border</label>
+        <select id="borderStyle">
+          <option value="border-none">None</option>
+          <option value="border-simple">Simple</option>
+          <option value="border-candy">Candy Dash</option>
+          <option value="border-dotted">Playful Dots</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="bgUpload" style="width:90px;">Background</label>
+        <input
+          id="bgUpload"
+          type="file"
+          accept="image/png,image/svg+xml,image/jpeg"
+          class="file-input"
+        />
+      </div>
+
+      <div class="row">
+        <label for="bgOpacity" style="width:90px;">Transparency</label>
+        <input
+          id="bgOpacity"
+          type="range"
+          min="0"
+          max="100"
+          value="20"
+          class="slider"
+        />
+      </div>
+
+      <button id="resetBg" class="btn btn-gray" type="button">
+        Reset Background
+      </button>
+    </div>
+
+    <!-- Data & Export -->
+    <div class="panel">
+      <div class="panel-title">Data &amp; Export</div>
+
+      <button id="cleanBtn" class="btn btn-gray" type="button">
+        🧹 Clean &amp; Sort Words
+      </button>
+      <button id="generateBtn" class="btn btn-blue" type="button">
+        🎯 Generate Game
+      </button>
+      <button id="downloadBtn" class="btn btn-green" type="button">
+        📄 Download PDF
+      </button>
+
+      <label for="pageSize">Print Size</label>
+      <select id="pageSize">
+        <option value="letter">8.5 x 11&quot; (Letter)</option>
+        <option value="6x9">6 x 9&quot;</option>
+        <option value="8x10">8 x 10&quot;</option>
+      </select>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="includeAnswer" checked />
+        <label for="includeAnswer" style="margin-bottom:0;">Include Answer Key</label>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="preview-toolbar">
+      <span class="toolbar-label">Layout Tools:</span>
+      <button id="gridToggle" class="btn btn-gray btn-small" type="button">
+        🧮 Grid Overlay
+      </button>
+      <span class="toolbar-label">Grid:</span>
+      <button id="gridZoomIn" class="btn btn-gray btn-small" type="button">
+        🔍 +
+      </button>
+      <button id="gridZoomOut" class="btn btn-gray btn-small" type="button">
+        🔍 -
+      </button>
+      <input
+        id="gridOpacity"
+        type="range"
+        min="0"
+        max="100"
+        value="20"
+        class="slider"
+        style="width:100px;"
+      />
+      <span class="toolbar-label">Swap / Shuffle:</span>
+      <button id="toolbarSwap" class="btn btn-gray btn-small" type="button">
+        ↔️ Swap
+      </button>
+      <button id="toolbarShuffle" class="btn btn-gray btn-small" type="button">
+        🎲 Shuffle
+      </button>
+    </div>
+
+    <div class="preview-wrapper">
+      <div class="preview-page" id="previewPage">
+        <div id="previewBg" class="preview-bg"></div>
+        <div id="previewBorder" class="preview-border border-none"></div>
+        <div id="gridOverlay" class="grid-overlay"></div>
+
+        <div class="page-content">
+          <div id="gameTitle" class="game-title">CANDY MATCH</div>
+          <div id="gameSubtitle" class="game-subtitle">
+            Match the clue to the candy it describes!
+          </div>
+
+          <div id="gameBody" class="game-body">
+            <div id="cluesColumn" class="clues-wrapper"></div>
+            <div id="answersColumn" class="answers-list"></div>
+          </div>
+
+          <div class="answer-key" id="answerKey">
+            <h4>Answer Key</h4>
+            <div class="answer-key-row" id="answerKeyRow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    async function fetchWordsFromDatamuse(theme, limit) {
+      if (!theme) return [];
+      const url =
+        "https://api.datamuse.com/words?ml=" +
+        encodeURIComponent(theme) +
+        "&max=" +
+        encodeURIComponent(limit);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data
+          .map((d) => (d.word || "").replace(/_/g, " "))
+          .filter(Boolean);
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+    }
+
+    const defaultCandies = [
+      "Skittles",
+      "Butterfinger",
+      "PayDay",
+      "Reese\u2019s Pieces",
+      "Life Savers",
+      "Snickers",
+      "Kit Kat",
+      "Milky Way",
+      "M&M\u2019s",
+      "100 Grand",
+      "Twix",
+      "Hershey\u2019s Kiss",
+      "Tootsie Roll",
+      "Starburst",
+      "Almond Joy"
+    ];
+
+    // DOM references
+    const modeToggle = document.getElementById("modeToggle");
+    const themeInput = document.getElementById("themeInput");
+    const styleSelect = document.getElementById("styleSelect");
+    const crossMatchToggle = document.getElementById("crossMatchToggle");
+    const bibleTheme = document.getElementById("bibleTheme");
+    const secondaryTheme = document.getElementById("secondaryTheme");
+    const bibleThemeLabel = document.getElementById("bibleThemeLabel");
+    const secondaryThemeLabel = document.getElementById("secondaryThemeLabel");
+    const manualList = document.getElementById("manualList");
+    const uploadTxt = document.getElementById("uploadTxt");
+
+    const titleInput = document.getElementById("titleInput");
+    const subtitleInput = document.getElementById("subtitleInput");
+    const fontSelect = document.getElementById("fontSelect");
+    const titleSize = document.getElementById("titleSize");
+    const fillColor = document.getElementById("fillColor");
+    const outlineColor = document.getElementById("outlineColor");
+    const shadowToggle = document.getElementById("shadowToggle");
+    const swapColumns = document.getElementById("swapColumns");
+    const showNumbers = document.getElementById("showNumbers");
+    const lineStyle = document.getElementById("lineStyle");
+    const lineSpacing = document.getElementById("lineSpacing");
+    const rowCount = document.getElementById("rowCount");
+    const shuffleBtn = document.getElementById("shuffleBtn");
+
+    const borderStyle = document.getElementById("borderStyle");
+    const bgUpload = document.getElementById("bgUpload");
+    const bgOpacity = document.getElementById("bgOpacity");
+    const resetBg = document.getElementById("resetBg");
+
+    const cleanBtn = document.getElementById("cleanBtn");
+    const generateBtn = document.getElementById("generateBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const pageSize = document.getElementById("pageSize");
+    const includeAnswer = document.getElementById("includeAnswer");
+
+    const gameTitle = document.getElementById("gameTitle");
+    const gameSubtitle = document.getElementById("gameSubtitle");
+    const gameBody = document.getElementById("gameBody");
+    const cluesColumn = document.getElementById("cluesColumn");
+    const answersColumn = document.getElementById("answersColumn");
+    const answerKeyRow = document.getElementById("answerKeyRow");
+
+    const previewBorder = document.getElementById("previewBorder");
+    const previewBg = document.getElementById("previewBg");
+    const gridOverlay = document.getElementById("gridOverlay");
+    const gridToggle = document.getElementById("gridToggle");
+    const gridZoomIn = document.getElementById("gridZoomIn");
+    const gridZoomOut = document.getElementById("gridZoomOut");
+    const gridOpacity = document.getElementById("gridOpacity");
+    const toolbarSwap = document.getElementById("toolbarSwap");
+    const toolbarShuffle = document.getElementById("toolbarShuffle");
+
+    let currentClues = [];
+    let currentAnswers = [];
+    let dragTarget = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    let gridVisible = false;
+
+    // Dark / light UI toggle
+    modeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    });
+
+    // Title styling
+    function applyTitleStyle() {
+      const t = titleInput.value.trim() || "Candy Match";
+      const s =
+        subtitleInput.value.trim() || "Match the clue to the candy it describes!";
+      gameTitle.textContent = t.toUpperCase();
+      gameSubtitle.textContent = s;
+
+      gameTitle.style.fontFamily = fontSelect.value;
+      gameSubtitle.style.fontFamily = fontSelect.value;
+
+      gameTitle.style.fontSize = titleSize.value + "px";
+      gameTitle.style.color = fillColor.value;
+      gameTitle.style.webkitTextStroke = "1px " + outlineColor.value;
+      gameTitle.style.textShadow = shadowToggle.checked
+        ? "0 1px 0 rgba(0,0,0,0.35)"
+        : "none";
+    }
+
+    [titleInput, subtitleInput, fontSelect, titleSize, fillColor, outlineColor].forEach(
+      (el) => el.addEventListener("input", applyTitleStyle)
+    );
+    shadowToggle.addEventListener("change", applyTitleStyle);
+    applyTitleStyle();
+
+    // Draggable titles
+    function makeDraggable(el) {
+      el.addEventListener("mousedown", (e) => {
+        const rect = el.getBoundingClientRect();
+        const pageRect = document.getElementById("previewPage").getBoundingClientRect();
+        dragTarget = el;
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        document.addEventListener("mousemove", onDragMove);
+        document.addEventListener("mouseup", onDragEnd);
+      });
+    }
+
+    function onDragMove(e) {
+      if (!dragTarget) return;
+      const pageRect = document.getElementById("previewPage").getBoundingClientRect();
+      const x = e.clientX - pageRect.left - dragOffsetX;
+      const y = e.clientY - pageRect.top - dragOffsetY;
+      dragTarget.style.position = "absolute";
+      dragTarget.style.left = x + "px";
+      dragTarget.style.top = y + "px";
+      dragTarget.style.transform = "none";
+    }
+
+    function onDragEnd() {
+      dragTarget = null;
+      document.removeEventListener("mousemove", onDragMove);
+      document.removeEventListener("mouseup", onDragEnd);
+    }
+
+    makeDraggable(gameTitle);
+    makeDraggable(gameSubtitle);
+
+    // Layout controls
+    lineSpacing.addEventListener("input", () => {
+      document.documentElement.style.setProperty(
+        "--row-gap",
+        lineSpacing.value + "px"
+      );
+    });
+
+    swapColumns.addEventListener("change", () => {
+      gameBody.classList.toggle("swap", swapColumns.checked);
+    });
+
+    toolbarSwap.addEventListener("click", () => {
+      swapColumns.checked = !swapColumns.checked;
+      gameBody.classList.toggle("swap", swapColumns.checked);
+    });
+
+    showNumbers.addEventListener("change", () => {
+      const rows = document.querySelectorAll(".clue-row");
+      rows.forEach((row) => {
+        if (showNumbers.checked) row.classList.remove("hide-nums");
+        else row.classList.add("hide-nums");
+      });
+    });
+
+    lineStyle.addEventListener("change", () => {
+      const lines = document.querySelectorAll(".clue-line");
+      lines.forEach((line) => {
+        if (lineStyle.value === "dotted") line.classList.add("dotted");
+        else line.classList.remove("dotted");
+      });
+    });
+
+    // Borders & Background
+    borderStyle.addEventListener("change", () => {
+      previewBorder.className = "preview-border " + borderStyle.value;
+    });
+
+    bgOpacity.addEventListener("input", () => {
+      previewBg.style.opacity = bgOpacity.value / 100;
+    });
+
+    bgUpload.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        previewBg.style.backgroundImage = `url(${ev.target.result})`;
+        previewBg.style.opacity = bgOpacity.value / 100;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    resetBg.addEventListener("click", () => {
+      previewBg.style.backgroundImage = "none";
+      previewBg.style.opacity = 0;
+    });
+
+    // Grid overlay
+    gridToggle.addEventListener("click", () => {
+      gridVisible = !gridVisible;
+      gridOverlay.style.display = gridVisible ? "block" : "none";
+      gridToggle.textContent = gridVisible
+        ? "❌ Remove Grid Overlay"
+        : "🧮 Grid Overlay";
+    });
+
+    gridZoomIn.addEventListener("click", () => {
+      let size = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue("--grid-size"),
+        10
+      );
+      size = Math.max(8, size - 4);
+      document.documentElement.setProperty
+        ? document.documentElement.setProperty("--grid-size", size + "px")
+        : document.documentElement.style.setProperty("--grid-size", size + "px");
+    });
+
+    gridZoomOut.addEventListener("click", () => {
+      let size = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue("--grid-size"),
+        10
+      );
+      size = Math.min(80, size + 4);
+      document.documentElement.style.setProperty("--grid-size", size + "px");
+    });
+
+    gridOpacity.addEventListener("input", () => {
+      document.documentElement.style.setProperty(
+        "--grid-opacity",
+        gridOpacity.value / 100
+      );
+    });
+
+    // Cross-match toggle
+    crossMatchToggle.addEventListener("change", () => {
+      const on = crossMatchToggle.checked;
+      bibleTheme.style.display = on ? "block" : "none";
+      bibleThemeLabel.style.display = on ? "block" : "none";
+      secondaryTheme.style.display = on ? "block" : "none";
+      secondaryThemeLabel.style.display = on ? "block" : "none";
+
+      if (!on) {
+        titleInput.value = "Candy Match";
+        subtitleInput.value = "Match the clue to the candy it describes!";
+        applyTitleStyle();
+      }
+    });
+
+    // Parsing manual words
+    function parseManualWords() {
+      const text = manualList.value || "";
+      return text
+        .split(/\r?\n/)
+        .map((w) => w.trim())
+        .filter(Boolean);
+    }
+
+    uploadTxt.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const lines = ev.target.result
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .filter(Boolean);
+        if (!lines.length) return;
+        manualList.value = lines.join("\n");
+      };
+      reader.readAsText(file);
+    });
+
+    // Build game
+    function buildGame(clues, answers) {
+      const n = Math.min(
+        parseInt(rowCount.value, 10) || 10,
+        clues.length,
+        answers.length
+      );
+
+      currentClues = clues.slice(0, n);
+      currentAnswers = answers.slice(0, n);
+
+      cluesColumn.innerHTML = "";
+      answersColumn.innerHTML = "";
+      answerKeyRow.innerHTML = "";
+
+      const usedClues = currentClues.slice();
+      const shuffledAnswers = shuffle(currentAnswers.slice());
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      const answerPairs = [];
+
+      for (let i = 0; i < n; i++) {
+        const row = document.createElement("div");
+        row.className = "clue-row";
+
+        const num = document.createElement("span");
+        num.className = "clue-num";
+        num.textContent = (i + 1) + ".";
+        row.appendChild(num);
+
+        const clueSpan = document.createElement("span");
+        clueSpan.textContent = usedClues[i];
+        row.appendChild(clueSpan);
+
+        const line = document.createElement("div");
+        line.className = "clue-line";
+        if (lineStyle.value === "dotted") line.classList.add("dotted");
+        row.appendChild(line);
+
+        if (!showNumbers.checked) row.classList.add("hide-nums");
+
+        cluesColumn.appendChild(row);
+      }
+
+      for (let i = 0; i < n; i++) {
+        const wrap = document.createElement("div");
+        const label = document.createElement("span");
+        label.className = "answer-label";
+        label.textContent = letters[i] + ".";
+        const t = document.createElement("span");
+        t.textContent = " " + shuffledAnswers[i];
+        wrap.appendChild(label);
+        wrap.appendChild(t);
+        answersColumn.appendChild(wrap);
+
+        answerPairs.push({
+          number: i + 1,
+          letter: letters[i],
+          candy: shuffledAnswers[i]
+        });
+      }
+
+      if (includeAnswer.checked) {
+        answerPairs.forEach((p) => {
+          const span = document.createElement("span");
+          span.textContent = p.number + " → " + p.letter;
+          answerKeyRow.appendChild(span);
+        });
+      }
+    }
+
+    // Generate & Clean
+    cleanBtn.addEventListener("click", () => {
+      if (
+        !themeInput.value.trim() &&
+        !manualList.value.trim() &&
+        !bibleTheme.value.trim() &&
+        !secondaryTheme.value.trim()
+      ) {
+        alert("Enter a theme/topic, manual words, or Bible + secondary theme first.");
+        return;
+      }
+      generateBtn.click();
+    });
+
+    generateBtn.addEventListener("click", async () => {
+      const style = styleSelect.value;
+      const baseLimit = style === "kids" ? 12 : 15;
+
+      let clues = [];
+      let answers = [];
+
+      const manual = parseManualWords();
+
+      if (crossMatchToggle.checked) {
+        const bibleTopic = bibleTheme.value.trim() || "bible verse";
+        const secondary = secondaryTheme.value.trim() || "harvest";
+
+        const [bibleWords, otherWords] = await Promise.all([
+          fetchWordsFromDatamuse(bibleTopic, baseLimit),
+          fetchWordsFromDatamuse(secondary, baseLimit)
+        ]);
+
+        const bibleClues =
+          bibleWords.length > 0
+            ? bibleWords.map((w) => w.toUpperCase())
+            : [
+                "LUKE 10:2",
+                "PSALM 65:11",
+                "PSALM 8:3-4",
+                "ECCLESIASTES 3:4",
+                "PROVERBS 10:5"
+              ];
+
+        const otherList =
+          manual.length > 0
+            ? manual.map((w) => w.toUpperCase())
+            : otherWords.length
+            ? otherWords.map((w) => w.toUpperCase())
+            : [
+                "HARVEST FESTIVAL",
+                "BASKET OF FRUITS",
+                "OLIVES",
+                "AUTUMN LEAVES",
+                "SWEET TREATS"
+              ];
+
+        clues = bibleClues;
+        answers = otherList;
+
+        const themeText = (secondaryTheme.value.trim() || "Harvest").toUpperCase();
+        titleInput.value = "Bible " + themeText + " Match";
+        subtitleInput.value =
+          "Match the terms with their " +
+          themeText.toLowerCase() +
+          " related verse below.";
+        applyTitleStyle();
+      } else {
+        const theme = themeInput.value.trim();
+        if (!theme && !manual.length) {
+          alert("Enter a theme/topic or some manual words first.");
+          return;
+        }
+
+        const aiWords = theme
+          ? await fetchWordsFromDatamuse(theme, baseLimit)
+          : [];
+        const combined = manual.concat(
+          aiWords.map((w) =>
+            w
+              .replace(/\s+/g, " ")
+              .trim()
+              .toUpperCase()
+          )
+        );
+
+        clues = combined.length
+          ? Array.from(new Set(combined))
+          : ["SANTA'S DRINK", "CHRISTMAS SHOPPING", "SNOWMAN", "GIFT LIST"];
+
+        answers = defaultCandies.slice();
+        if (!titleInput.value.trim()) {
+          titleInput.value = theme ? theme + " Candy Match" : "Candy Match";
+          applyTitleStyle();
+        }
+      }
+
+      buildGame(clues, answers);
+    });
+
+    shuffleBtn.addEventListener("click", () => {
+      if (!currentClues.length || !currentAnswers.length) {
+        generateBtn.click();
+        return;
+      }
+      buildGame(currentClues, currentAnswers);
+    });
+
+    toolbarShuffle.addEventListener("click", () => {
+      shuffleBtn.click();
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      window.print();
+    });
+
+    // Initial filler
+    buildGame(
+      ["LUKE 9:24", "PROVERBS 24:26", "GENESIS 9:15", "MARK 1:17", "PSALM 18:2"],
+      defaultCandies
+    );
+  </script>
+</body>
+</html>

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Candy Match Generator – Free</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --blue: #2563eb;
+      --green: #22c55e;
+      --ink: #111827;
+      --muted: #6b7280;
+      --panel-bg: #eff6ff;
+      --preview-bg: #ffffff;
+      --line-color: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: #e5e7eb;
+      color: var(--ink);
+    }
+
+    .sidebar {
+      width: 340px;
+      background: linear-gradient(180deg, #fee2e2, #e0f2fe);
+      border-right: 1px solid #d1d5db;
+      padding: 14px 16px 80px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .tier-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1d4ed8;
+      background: #dbeafe;
+      border-radius: 999px;
+      display: inline-block;
+      padding: 2px 8px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      margin-bottom: 8px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      transition: transform 0.05s ease, box-shadow 0.05s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-blue {
+      background: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(34, 197, 94, 0.25);
+    }
+
+    .btn-gray {
+      background: #6b7280;
+      color: #f9fafb;
+    }
+
+    .btn-locked {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-top: 2px;
+      margin-bottom: 6px;
+    }
+
+    .checkbox-row input {
+      width: 16px;
+      height: 16px;
+    }
+
+    .hint {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 0;
+      margin-bottom: 6px;
+    }
+
+    .panel {
+      border-radius: 12px;
+      background: var(--panel-bg);
+      padding: 8px 9px 10px;
+      margin-bottom: 10px;
+      border: 1px solid #dbeafe;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .panel-title span.lock {
+      font-size: 11px;
+      color: #b91c1c;
+    }
+
+    .static-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 12px;
+      height: 100%;
+    }
+
+    .preview-wrapper {
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      overflow: auto;
+      height: 100%;
+    }
+
+    .preview-page {
+      margin: 0 auto;
+      background: var(--preview-bg);
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 11 / 8.5;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 0 0 6px #ffffff;
+      padding: 48px 72px 56px;
+      position: relative;
+    }
+
+    .page-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .game-subtitle {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .game-body {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 28px;
+      font-size: 14px;
+      flex: 1;
+      align-items: flex-start;
+    }
+
+    .clues-wrapper {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+    }
+
+    .clue-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      column-gap: 4px;
+    }
+
+    .clue-num {
+      width: 26px;
+      font-weight: 600;
+    }
+
+    .clue-line {
+      border-bottom: 1px solid var(--line-color);
+      margin-top: 2px;
+      grid-column: 2 / span 1;
+    }
+
+    .answers-list {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+    }
+
+    .answers-list div {
+      margin-bottom: 0;
+    }
+
+    .answer-label {
+      width: 18px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .answer-key {
+      margin-top: 24px;
+      border-top: 1px dashed #d1d5db;
+      padding-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .answer-key h4 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .answer-key-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .answer-key-row span {
+      min-width: 80px;
+    }
+
+    .ads-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+    }
+
+    .ad-box {
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px dashed #cbd5f5;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .ad-box-bottom {
+      margin-top: auto;
+    }
+
+    .footer-brand {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: #6b7280;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+      .sidebar,
+      .ads-column {
+        display: none !important;
+      }
+      .main {
+        padding: 0;
+      }
+      .preview-wrapper {
+        padding: 0;
+        box-shadow: none;
+      }
+      .preview-page {
+        border: none;
+        box-shadow: none;
+        max-width: none;
+        aspect-ratio: auto;
+        padding: 40px 56px;
+      }
+      .footer-brand {
+        bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h1>Candy Match Generator</h1>
+    <div class="tier-tag">Free Tier</div>
+
+    <!-- Theme + Style -->
+    <label for="themeInput">Theme / Topic</label>
+    <input
+      id="themeInput"
+      type="text"
+      placeholder="e.g. Bible, Christmas, Baby Shower"
+    />
+
+    <label for="styleSelect">Style / Audience</label>
+    <select id="styleSelect">
+      <option value="kids">Kids (Themed)</option>
+      <option value="general">General (For Adults)</option>
+    </select>
+
+    <!-- Manual Word List -->
+    <div class="panel">
+      <div class="panel-title">Manual Word List</div>
+      <p class="hint">
+        Enter or paste your own words (one per line). Datamuse will mix in related words
+        from your theme.
+      </p>
+      <textarea
+        id="manualList"
+        placeholder="Type or paste words here (one per line)..."
+      ></textarea>
+      <button
+        class="btn btn-locked"
+        type="button"
+        onclick="alert('Upload .txt is available in Pro Plus tier.')"
+      >
+        🔒 Upload .txt (Pro Plus)
+      </button>
+    </div>
+
+    <!-- Title & Fonts -->
+    <div class="panel">
+      <div class="panel-title">Title &amp; Fonts</div>
+      <label for="titleInput">Game Title</label>
+      <input id="titleInput" type="text" placeholder="e.g. Bible Candy Match" />
+
+      <label for="subtitleInput">Subtitle</label>
+      <input
+        id="subtitleInput"
+        type="text"
+        placeholder="Match the clue to the candy it describes!"
+      />
+
+      <div class="row">
+        <label for="fontSelect" style="width:80px;">Font</label>
+        <select id="fontSelect">
+          <option value="system-ui">System Default</option>
+          <option value="Arial, sans-serif">Arial</option>
+          <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Georgia', serif">Georgia</option>
+        </select>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="boldTitle" />
+        <label for="boldTitle" style="margin-bottom:0;">Bold title</label>
+      </div>
+
+      <p class="hint">
+        Color, outline, shadows, and drag-to-move titles are available in Pro Plus. 🔒
+      </p>
+    </div>
+
+    <!-- Layout & Lines (locked extras) -->
+    <div class="panel">
+      <div class="panel-title">
+        Layout &amp; Lines <span class="lock">🔒 Advanced in Pro Plus</span>
+      </div>
+      <p class="hint">
+        Free tier uses simple solid lines and spacing. Swap columns, dotted lines, and
+        fine spacing controls unlock in Pro Plus.
+      </p>
+    </div>
+
+    <!-- Borders & Background (locked visually) -->
+    <div class="panel">
+      <div class="panel-title">
+        Borders &amp; Background <span class="lock">🔒 Pro Plus</span>
+      </div>
+      <button
+        class="btn btn-locked"
+        type="button"
+        onclick="alert('Decorative borders are available in Pro Plus tier.')"
+      >
+        🔒 Decorative Borders
+      </button>
+      <button
+        class="btn btn-locked"
+        type="button"
+        onclick="alert('Background uploads are available in Pro Plus tier.')"
+      >
+        🔒 Background Upload
+      </button>
+    </div>
+
+    <!-- Bonus Cross-Match (locked) -->
+    <div class="panel">
+      <div class="panel-title">
+        ⭐ Bonus Bible Cross-Match <span class="lock">🔒 Pro Plus</span>
+      </div>
+      <p class="hint">
+        Mix Bible verses with any niche (Christmas, Halloween, etc.). Available in Pro
+        Plus.
+      </p>
+    </div>
+
+    <!-- Grid Overlay (locked) -->
+    <div class="panel">
+      <div class="panel-title">
+        🧮 Grid Overlay <span class="lock">🔒 Pro Plus</span>
+      </div>
+      <p class="hint">
+        Alignment grid to keep everything straight while you design. Available in Pro
+        Plus.
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="panel">
+      <div class="panel-title">Generate &amp; Export</div>
+
+      <button id="cleanBtn" class="btn btn-gray">🧹 Clean &amp; Sort</button>
+      <button id="generateBtn" class="btn btn-blue">🎯 Generate Game</button>
+      <button id="downloadBtn" class="btn btn-green">📄 Download PDF</button>
+
+      <p class="static-text">
+        Print Size: <strong>8.5 x 11&quot;</strong>
+      </p>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="includeAnswer" checked />
+        <label for="includeAnswer" style="margin-bottom:0;">Include Answer Key</label>
+      </div>
+
+      <p class="hint">
+        Free tier is ad-supported and includes a small branding line on the printable.
+      </p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="layout">
+      <div class="preview-wrapper">
+        <div class="preview-page" id="previewPage">
+          <div class="page-content">
+            <div class="game-title" id="gameTitle">CANDY MATCH</div>
+            <div class="game-subtitle" id="gameSubtitle">
+              Match the clue to the candy it describes!
+            </div>
+
+            <div class="game-body">
+              <div id="cluesColumn" class="clues-wrapper"></div>
+              <div id="answersColumn" class="answers-list"></div>
+            </div>
+
+            <div class="answer-key" id="answerKey">
+              <h4>Answer Key</h4>
+              <div class="answer-key-row" id="answerKeyRow"></div>
+            </div>
+          </div>
+          <div class="footer-brand">
+            Made with The Printable Generator – a Guinea App Hub product.
+          </div>
+        </div>
+      </div>
+
+      <div class="ads-column">
+        <div class="ad-box">
+          Sidebar Ad Placeholder<br />
+          <!-- Google AdSense sidebar code goes here -->
+        </div>
+        <div class="ad-box ad-box-bottom">
+          Bottom Ad Placeholder<br />
+          <!-- Google AdSense bottom code goes here -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const defaultCandies = [
+      "Skittles",
+      "Butterfinger",
+      "PayDay",
+      "Reese\u2019s Pieces",
+      "Life Savers",
+      "Snickers",
+      "Kit Kat",
+      "Milky Way",
+      "M&M\u2019s",
+      "100 Grand",
+      "Twix",
+      "Hershey\u2019s Kiss",
+      "Tootsie Roll",
+      "Starburst",
+      "Almond Joy"
+    ];
+
+    const themeInput = document.getElementById("themeInput");
+    const styleSelect = document.getElementById("styleSelect");
+    const manualList = document.getElementById("manualList");
+    const titleInput = document.getElementById("titleInput");
+    const subtitleInput = document.getElementById("subtitleInput");
+    const fontSelect = document.getElementById("fontSelect");
+    const boldTitle = document.getElementById("boldTitle");
+    const gameTitle = document.getElementById("gameTitle");
+    const gameSubtitle = document.getElementById("gameSubtitle");
+    const cluesColumn = document.getElementById("cluesColumn");
+    const answersColumn = document.getElementById("answersColumn");
+    const answerKeyRow = document.getElementById("answerKeyRow");
+    const includeAnswer = document.getElementById("includeAnswer");
+
+    function applyTitleStyle() {
+      const t = titleInput.value.trim() || "Candy Match";
+      const s =
+        subtitleInput.value.trim() || "Match the clue to the candy it describes!";
+      gameTitle.textContent = t.toUpperCase();
+      gameSubtitle.textContent = s;
+      gameTitle.style.fontFamily = fontSelect.value;
+      gameSubtitle.style.fontFamily = fontSelect.value;
+      gameTitle.style.fontWeight = boldTitle.checked ? "800" : "700";
+    }
+
+    [titleInput, subtitleInput, fontSelect, boldTitle].forEach((el) =>
+      el.addEventListener("input", applyTitleStyle)
+    );
+    applyTitleStyle();
+
+    async function fetchWordsFromDatamuse(theme, limit) {
+      if (!theme) return [];
+      const url =
+        "https://api.datamuse.com/words?ml=" +
+        encodeURIComponent(theme) +
+        "&max=" +
+        encodeURIComponent(limit);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data
+          .map((d) => (d.word || "").replace(/_/g, " "))
+          .filter(Boolean);
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+    }
+
+    function parseManualWords() {
+      const text = manualList.value || "";
+      return text
+        .split(/\r?\n/)
+        .map((w) => w.trim())
+        .filter(Boolean);
+    }
+
+    function buildGame(clues, candies) {
+      cluesColumn.innerHTML = "";
+      answersColumn.innerHTML = "";
+      answerKeyRow.innerHTML = "";
+
+      const maxPairs = Math.min(clues.length, candies.length, 10);
+      const usedClues = clues.slice(0, maxPairs);
+      const candiesCopy = candies.slice(0, maxPairs);
+      const shuffledCandies = shuffle(candiesCopy.slice());
+
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      const answerPairs = [];
+
+      for (let i = 0; i < maxPairs; i++) {
+        const row = document.createElement("div");
+        row.className = "clue-row";
+
+        const num = document.createElement("span");
+        num.className = "clue-num";
+        num.textContent = (i + 1) + ".";
+        row.appendChild(num);
+
+        const clueSpan = document.createElement("span");
+        clueSpan.textContent = usedClues[i];
+        row.appendChild(clueSpan);
+
+        const line = document.createElement("div");
+        line.className = "clue-line";
+        row.appendChild(line);
+
+        cluesColumn.appendChild(row);
+      }
+
+      for (let i = 0; i < maxPairs; i++) {
+        const wrap = document.createElement("div");
+        const label = document.createElement("span");
+        label.className = "answer-label";
+        label.textContent = letters[i] + ".";
+        const text = document.createElement("span");
+        text.textContent = " " + shuffledCandies[i];
+        wrap.appendChild(label);
+        wrap.appendChild(text);
+        answersColumn.appendChild(wrap);
+
+        const originalIndex = candies.indexOf(shuffledCandies[i]);
+        answerPairs.push({
+          number: i + 1,
+          letter: letters[i],
+          candy: shuffledCandies[i]
+        });
+      }
+
+      if (includeAnswer.checked) {
+        answerPairs.forEach((p) => {
+          const span = document.createElement("span");
+          span.textContent = p.number + " → " + p.letter;
+          answerKeyRow.appendChild(span);
+        });
+      }
+    }
+
+    document.getElementById("cleanBtn").addEventListener("click", () => {
+      if (!themeInput.value.trim() && !manualList.value.trim()) {
+        alert("Enter a theme/topic or some manual words first.");
+        return;
+      }
+      document.getElementById("generateBtn").click();
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", async () => {
+      const theme = themeInput.value.trim();
+      const style = styleSelect.value;
+      let limit = style === "kids" ? 12 : 15;
+
+      const manual = parseManualWords();
+      let clues = manual.slice();
+
+      if (theme) {
+        const aiWords = await fetchWordsFromDatamuse(theme, limit);
+        clues = clues.concat(
+          aiWords.map((w) =>
+            w
+              .replace(/\s+/g, " ")
+              .trim()
+              .replace(/^\w/, (c) => c.toUpperCase())
+          )
+        );
+      }
+
+      if (!clues.length) {
+        clues = [
+          "Luke 9:24",
+          "Proverbs 24:26",
+          "Genesis 9:15",
+          "Mark 1:17",
+          "Psalm 18:2",
+          "Isaiah 9:6",
+          "John 3:16"
+        ];
+      }
+
+      clues = Array.from(new Set(clues));
+      buildGame(clues, defaultCandies);
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      window.print();
+    });
+
+    // Initial filler
+    buildGame(
+      ["Luke 9:24", "Proverbs 24:26", "Genesis 9:15", "Mark 1:17", "Psalm 18:2"],
+      defaultCandies
+    );
+  </script>
+</body>
+</html>
