@@ -3,142 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <title>Candy Match Generator – Pro Plus</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --blue: #2563eb;
-      --green: #22c55e;
-      --gold: #facc15;
-      --ink: #0f172a;
-      --muted: #6b7280;
-      --preview-bg: #ffffff;
-      --line-color: #111827;
-      --row-gap: 8px;
-      --grid-size: 24px;
-      --grid-opacity: 0.2;
+      --sidebar-bg: #0f172a;
+      --sidebar-bg-soft: #111827;
+      --sidebar-text: #f9fafb;
+      --accent: #2563eb;
+      --accent-soft: #1d4ed8;
+      --accent-green: #16a34a;
+      --border-soft: #1f2937;
+      --page-bg: #ffffff;
+      --answer-color: #c81e1e;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
 
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
     }
 
     body {
-      display: flex;
-      min-height: 100vh;
-      background: #e5e7eb;
-      color: var(--ink);
-      transition: background 0.2s ease, color 0.2s ease;
+      margin: 0;
+      font-family: var(--font-main);
+      background: #020617;
+      color: var(--sidebar-text);
+      height: 100vh;
+      overflow: hidden;
     }
 
-    body.dark {
-      background: #020617;
-      color: #e5e7eb;
+    .app-shell {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      height: 100vh;
     }
+
+    /* LEFT PANEL */
 
     .sidebar {
-      width: 360px;
-      background: linear-gradient(180deg, #e0f2fe, #eef2ff);
-      border-right: 1px solid #d4d4ff;
-      padding: 12px 14px 80px;
+      background: radial-gradient(circle at top left, #1d3557, #020617);
+      border-right: 1px solid #1f2937;
+      padding: 16px 18px 18px;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
+      gap: 12px;
     }
 
-    body.dark .sidebar {
-      background: #020617;
-      border-color: #111827;
+    .sidebar-header {
+      margin-bottom: 6px;
     }
 
-    h1 {
-      font-size: 22px;
+    .tool-tier {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #a5b4fc;
       margin-bottom: 4px;
-      font-weight: 800;
     }
 
-    .tier-tag {
-      font-size: 11px;
+    .tool-title {
+      font-size: 20px;
       font-weight: 700;
-      color: #92400e;
-      background: #fef3c7;
-      border-radius: 999px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
+    }
+
+    .tool-title span.badge-proplus {
+      font-size: 12px;
       padding: 2px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f97316, #ec4899);
+      color: #fff;
+    }
+
+    .sidebar-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+    }
+
+    .panel {
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 10px 12px 12px;
       margin-bottom: 10px;
     }
 
-    .header-row {
+    .panel h3 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #cbd5f5;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-
-    .mode-toggle {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      border: none;
-      background: var(--blue);
-      color: #ffffff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+      gap: 6px;
     }
 
     label {
       font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 4px;
       display: block;
+      margin-bottom: 4px;
+      color: #e5e7eb;
     }
 
     input[type="text"],
     select,
-    textarea,
-    input[type="number"] {
+    textarea {
       width: 100%;
-      padding: 7px 9px;
       border-radius: 8px;
-      border: 1px solid #d1d5db;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #f9fafb;
       font-size: 13px;
-      margin-bottom: 8px;
+      padding: 7px 9px;
       outline: none;
-      background: #ffffff;
     }
 
-    body.dark input[type="text"],
-    body.dark select,
-    body.dark textarea,
-    body.dark input[type="number"] {
-      background: #020617;
-      color: #e5e7eb;
-      border-color: #1e293b;
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
     }
 
     textarea {
-      min-height: 70px;
       resize: vertical;
+      min-height: 90px;
+      max-height: 180px;
+    }
+
+    .small-note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .row-inline {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .row-inline > * {
+      flex: 1;
     }
 
     .btn {
-      width: 100%;
+      border-radius: 999px;
       border: none;
-      border-radius: 10px;
-      padding: 9px 11px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 9px 12px;
       cursor: pointer;
-      margin-top: 4px;
-      margin-bottom: 8px;
-      transition: transform 0.05s ease, box-shadow 0.05s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.05s ease, box-shadow 0.05s ease,
+        background 0.15s ease;
+      white-space: nowrap;
     }
 
     .btn:active {
@@ -146,28 +174,39 @@
       box-shadow: none;
     }
 
-    .btn-blue {
-      background: var(--blue);
-      color: #ffffff;
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.48);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-soft);
+    }
+
+    .btn-ghost {
+      background: #111827;
+      color: #e5e7eb;
+      border: 1px solid #374151;
+    }
+
+    .btn-ghost:hover {
+      background: #020617;
     }
 
     .btn-green {
-      background: var(--green);
-      color: #ffffff;
-      box-shadow: 0 4px 10px rgba(34, 197, 94, 0.25);
+      background: var(--accent-green);
+      color: white;
+      box-shadow: 0 8px 24px rgba(22, 163, 74, 0.5);
     }
 
-    .btn-gray {
-      background: #6b7280;
-      color: #f9fafb;
+    .btn-green:hover {
+      background: #15803d;
     }
 
     .btn-small {
-      width: auto;
-      padding: 5px 8px;
-      font-size: 11px;
-      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
     }
 
     .checkbox-row {
@@ -175,622 +214,614 @@
       align-items: center;
       gap: 6px;
       font-size: 12px;
-      margin-top: 2px;
-      margin-bottom: 6px;
+      color: #e5e7eb;
+      margin-top: 4px;
     }
 
     .checkbox-row input {
+      margin: 0;
+    }
+
+    .badge-locked {
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      border: 1px solid #f97316;
+      color: #fed7aa;
+      background: rgba(30, 64, 175, 0.4);
+      margin-left: 6px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .toggle-row span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle {
+      width: 40px;
+      height: 20px;
+      border-radius: 999px;
+      background: #111827;
+      border: 1px solid #4b5563;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 1px;
+      left: 1px;
       width: 16px;
       height: 16px;
+      border-radius: 50%;
+      background: #6b7280;
+      transition: transform 0.15s ease, background 0.15s ease;
     }
 
-    .hint {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 0;
-      margin-bottom: 6px;
+    .toggle-active {
+      background: #1e293b;
+      border-color: #f59e0b;
     }
 
-    body.dark .hint {
-      color: #9ca3af;
+    .toggle-active .toggle-thumb {
+      transform: translateX(18px);
+      background: #facc15;
     }
 
-    .panel {
-      border-radius: 12px;
-      background: #eff6ff;
-      padding: 8px 9px 10px;
-      margin-bottom: 10px;
-      border: 1px solid #dbeafe;
-    }
-
-    body.dark .panel {
-      background: #020617;
-      border-color: #111827;
-    }
-
-    .panel-title {
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .color-input-row {
       display: flex;
       align-items: center;
-      gap: 4px;
-    }
-
-    .row {
-      display: flex;
       gap: 6px;
-      align-items: center;
-      margin-bottom: 6px;
+      font-size: 12px;
+      margin-top: 6px;
     }
 
-    .row label {
-      margin-bottom: 0;
+    .color-input-row input[type="color"] {
+      width: 28px;
+      height: 20px;
+      border-radius: 6px;
+      border: 1px solid #4b5563;
+      padding: 0;
+      background: transparent;
     }
 
-    .slider {
-      width: 100%;
-    }
+    /* RIGHT PREVIEW */
 
-    .file-input {
-      font-size: 11px;
-    }
-
-    .main {
-      flex: 1;
+    .preview-shell {
+      background: radial-gradient(circle at top, #111827, #020617 55%);
+      padding: 18px 18px 18px 14px;
       display: flex;
       flex-direction: column;
-      padding: 12px 16px;
-    }
-
-    .preview-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 11px;
-    }
-
-    .toolbar-label {
-      font-weight: 600;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .preview-wrapper {
-      background: #f9fafb;
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22);
-      overflow: auto;
-      height: 100%;
-    }
-
-    body.dark .preview-wrapper {
-      background: #020617;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.75);
-    }
-
-    .preview-page {
-      margin: 0 auto;
-      background: var(--preview-bg);
-      width: 100%;
-      max-width: 800px;
-      aspect-ratio: 11 / 8.5;
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 0 0 6px #ffffff;
-      padding: 48px 72px 56px;
-      position: relative;
+      gap: 10px;
       overflow: hidden;
     }
 
-    .page-content {
-      position: relative;
-      z-index: 2;
-      height: 100%;
+    .preview-header {
       display: flex;
-      flex-direction: column;
-    }
-
-    .preview-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      pointer-events: none;
-      opacity: 0;
-      z-index: 0;
-    }
-
-    .preview-border {
-      position: absolute;
-      inset: 12px;
-      border-radius: 8px;
-      border: 2px solid transparent;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .border-none {
-      border-color: transparent;
-    }
-
-    .border-simple {
-      border-color: #f97316;
-    }
-
-    .border-candy {
-      border-style: dashed;
-      border-width: 4px;
-      border-color: #fb7185;
-    }
-
-    .border-dotted {
-      border-style: dotted;
-      border-width: 3px;
-      border-color: #22c55e;
-    }
-
-    .grid-overlay {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(to right, rgba(148, 163, 184, 0.5) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(148, 163, 184, 0.5) 1px, transparent 1px);
-      background-size: var(--grid-size) var(--grid-size);
-      opacity: var(--grid-opacity);
-      pointer-events: none;
-      z-index: 1;
-      display: none;
-    }
-
-    .game-title {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      cursor: move;
-      user-select: none;
-      position: relative;
-    }
-
-    .game-subtitle {
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      cursor: move;
-      user-select: none;
-      position: relative;
-    }
-
-    .game-body {
-      display: grid;
-      grid-template-columns: 1.2fr 0.9fr;
-      gap: 28px;
-      font-size: 14px;
-      flex: 1;
-      align-items: flex-start;
-    }
-
-    .game-body.swap {
-      grid-template-columns: 0.9fr 1.2fr;
-    }
-
-    .clues-wrapper {
-      display: flex;
-      flex-direction: column;
-      row-gap: var(--row-gap);
-    }
-
-    .clue-row {
-      display: grid;
-      grid-template-columns: auto 1fr;
+      justify-content: space-between;
       align-items: center;
-      column-gap: 4px;
+      color: #e5e7eb;
+      font-size: 13px;
     }
 
-    .clue-num {
-      width: 26px;
-      font-weight: 600;
+    .preview-header-title {
+      font-weight: 500;
+      opacity: 0.8;
     }
 
-    .clue-row.hide-nums .clue-num {
-      visibility: hidden;
+    .preview-actions {
+      display: flex;
+      gap: 8px;
     }
 
-    .clue-line {
-      border-bottom: 1px solid var(--line-color);
-      margin-top: 2px;
-      grid-column: 2 / span 1;
+    .preview-area {
+      flex: 1;
+      overflow-y: auto;
+      background: radial-gradient(circle at top, #1f2937, #020617 60%);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.16);
     }
 
-    .clue-line.dotted {
-      border-bottom-style: dotted;
-    }
-
-    .answers-list {
+    .page-stack {
+      max-width: 960px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      row-gap: var(--row-gap);
+      gap: 16px;
+      align-items: center;
     }
 
-    .answers-list div {
-      margin-bottom: 0;
+    .page {
+      background: var(--page-bg);
+      width: 800px;
+      height: 1035px; /* 8.5 x 11-ish at screen scale */
+      padding: 60px 72px 40px;
+      box-shadow: 0 18px 60px rgba(15, 23, 42, 0.9);
+      border-radius: 14px;
+      color: #111827;
+      position: relative;
     }
 
-    .answer-label {
-      width: 18px;
-      font-weight: 700;
-      display: inline-block;
+    .page h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0.12em;
+      text-align: center;
     }
 
-    .answer-key {
-      margin-top: 16px;
-      border-top: 1px dashed #d1d5db;
-      padding-top: 8px;
-      font-size: 11px;
-      color: var(--muted);
+    .page .subtitle {
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
     }
 
-    .answer-key h4 {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 4px;
+    .editable {
+      cursor: text;
     }
 
-    .answer-key-row {
+    .page-main {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 32px;
+      font-size: 14px;
+    }
+
+    .clue-list,
+    .candy-list {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 10px;
     }
 
-    .answer-key-row span {
-      min-width: 80px;
+    .clue-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    @media print {
-      body {
-        background: #ffffff;
+    .blank {
+      display: inline-block;
+      min-width: 70px;
+      border-bottom: 2px solid #111827;
+      height: 0;
+      position: relative;
+    }
+
+    .blank.answer {
+      border-bottom-color: #9ca3af;
+    }
+
+    .answer-letter {
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      transform: translateX(-50%);
+      font-weight: 700;
+      color: var(--answer-color);
+      font-size: 16px;
+    }
+
+    .number {
+      min-width: 24px;
+      text-align: right;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .clue-text {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .candy-row {
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+    }
+
+    .candy-letter {
+      font-weight: 600;
+      min-width: 18px;
+    }
+
+    .candy-text {
+      flex: 1;
+    }
+
+    .page-footer {
+      position: absolute;
+      bottom: 26px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .page-label {
+      position: absolute;
+      bottom: 10px;
+      right: 24px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* Answer key page tweaks */
+
+    .page.answer-key-page h2 {
+      margin: 0;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 0.16em;
+    }
+
+    .answer-key-wrap {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 32px;
+      font-size: 14px;
+    }
+
+    .answer-key-page .blank {
+      border-bottom: 2px solid #9ca3af;
+    }
+
+    /* Grid overlay (Pro Plus feature) */
+
+    .page.grid-overlay::before {
+      content: "";
+      position: absolute;
+      inset: 40px 40px 40px 40px;
+      pointer-events: none;
+      background-image: linear-gradient(
+          to right,
+          rgba(148, 163, 184, 0.25) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          to bottom,
+          rgba(148, 163, 184, 0.25) 1px,
+          transparent 1px
+        );
+      background-size: 24px 24px;
+      mix-blend-mode: multiply;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 1100px) {
+      .app-shell {
+        grid-template-columns: minmax(0, 1fr);
       }
       .sidebar {
-        display: none !important;
+        height: 50vh;
       }
-      .main {
-        padding: 0;
+      .preview-shell {
+        height: 50vh;
       }
-      .preview-wrapper {
-        padding: 0;
-        box-shadow: none;
-      }
-      .preview-page {
-        border: none;
-        box-shadow: none;
-        max-width: none;
-        aspect-ratio: auto;
-        padding: 40px 56px;
-      }
-      .grid-overlay {
-        display: none !important;
+      .page {
+        transform: scale(0.8);
+        transform-origin: top center;
       }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="header-row">
-      <div>
-        <h1>Candy Match Generator</h1>
-        <div class="tier-tag">👑 Pro Plus</div>
-      </div>
-      <button id="modeToggle" class="mode-toggle" title="Toggle light/dark UI">
-        🌙
-      </button>
-    </div>
-
-    <!-- Theme / Topic -->
-    <label for="themeInput">Theme / Topic</label>
-    <input
-      id="themeInput"
-      type="text"
-      placeholder="e.g. Bible verses, Baby Shower, Christmas"
-    />
-
-    <label for="styleSelect">Style / Audience</label>
-    <select id="styleSelect">
-      <option value="kids">Kids (Themed)</option>
-      <option value="general">General (For Adults)</option>
-    </select>
-
-    <!-- Bonus Cross-Match -->
-    <div class="panel">
-      <div class="panel-title">⭐ Bonus Bible Cross-Match Mode</div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="crossMatchToggle" />
-        <label for="crossMatchToggle" style="margin-bottom:0;">
-          Enable Bible Verses + Any Niche
-        </label>
-      </div>
-      <p class="hint">
-        When enabled, the left column uses Bible verses and the right column uses another
-        theme (Halloween, Christmas, Easter, etc.). Your title auto-updates.
-      </p>
-
-      <label for="bibleTheme" id="bibleThemeLabel" style="display:none;">
-        Bible Verses / Scripture
-      </label>
-      <input
-        id="bibleTheme"
-        type="text"
-        placeholder="e.g. Bible verses about courage"
-        style="display:none;"
-      />
-
-      <label for="secondaryTheme" id="secondaryThemeLabel" style="display:none;">
-        Cross-Match Theme (e.g. Halloween, Christmas)
-      </label>
-      <input
-        id="secondaryTheme"
-        type="text"
-        placeholder="e.g. Halloween, Christmas, Easter"
-        style="display:none;"
-      />
-    </div>
-
-    <!-- Manual Word List -->
-    <div class="panel">
-      <div class="panel-title">Manual Word List</div>
-      <p class="hint">
-        Combine your own words with AI suggestions. One item per line. Works for clues or
-        themed words.
-      </p>
-      <textarea
-        id="manualList"
-        placeholder="Type or paste words here (one per line)..."
-      ></textarea>
-
-      <label for="uploadTxt">Upload .txt (one item per line)</label>
-      <input id="uploadTxt" type="file" accept=".txt" class="file-input" />
-    </div>
-
-    <!-- Title & Fonts -->
-    <div class="panel">
-      <div class="panel-title">Title &amp; Fonts</div>
-
-      <label for="titleInput">Game Title</label>
-      <input id="titleInput" type="text" placeholder="e.g. Bible Candy Match" />
-
-      <label for="subtitleInput">Subtitle</label>
-      <input
-        id="subtitleInput"
-        type="text"
-        placeholder="Match the clue to the candy it describes!"
-      />
-
-      <div class="row">
-        <label for="fontSelect" style="width:80px;">Font</label>
-        <select id="fontSelect">
-          <option value="system-ui">System Default</option>
-          <option value="Arial, sans-serif">Arial</option>
-          <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
-          <option value="'Times New Roman', serif">Times New Roman</option>
-          <option value="'Georgia', serif">Georgia</option>
-          <option value="'Comic Sans MS', cursive">Comic (Kids)</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <label for="titleSize" style="width:80px;">Title Size</label>
-        <input
-          id="titleSize"
-          type="range"
-          min="22"
-          max="40"
-          value="30"
-          class="slider"
-        />
-      </div>
-
-      <div class="row">
-        <label for="fillColor" style="width:80px;">Fill</label>
-        <input id="fillColor" type="color" value="#111827" />
-        <label for="outlineColor" style="width:60px;">Outline</label>
-        <input id="outlineColor" type="color" value="#4b5563" />
-      </div>
-
-      <div class="checkbox-row">
-        <input type="checkbox" id="shadowToggle" />
-        <label for="shadowToggle" style="margin-bottom:0;">Soft shadow</label>
-      </div>
-
-      <p class="hint">
-        Drag the title and subtitle on the preview page to reposition them.
-      </p>
-    </div>
-
-    <!-- Layout & Lines -->
-    <div class="panel">
-      <div class="panel-title">Layout &amp; Lines</div>
-
-      <div class="checkbox-row">
-        <input type="checkbox" id="swapColumns" />
-        <label for="swapColumns" style="margin-bottom:0;">Swap columns</label>
-      </div>
-
-      <div class="checkbox-row">
-        <input type="checkbox" id="showNumbers" checked />
-        <label for="showNumbers" style="margin-bottom:0;">Show clue numbers</label>
-      </div>
-
-      <div class="row">
-        <label for="lineStyle" style="width:80px;">Line Style</label>
-        <select id="lineStyle">
-          <option value="solid">Solid</option>
-          <option value="dotted">Dotted</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <label for="lineSpacing" style="width:80px;">Line Spacing</label>
-        <input
-          id="lineSpacing"
-          type="range"
-          min="4"
-          max="16"
-          value="8"
-          class="slider"
-        />
-      </div>
-
-      <div class="row">
-        <label for="rowCount" style="width:80px;">Rows</label>
-        <input
-          id="rowCount"
-          type="number"
-          min="5"
-          max="15"
-          value="10"
-          style="width:80px;"
-        />
-        <button id="shuffleBtn" class="btn btn-gray btn-small" type="button">
-          Shuffle Pairs
-        </button>
-      </div>
-    </div>
-
-    <!-- Borders & Background -->
-    <div class="panel">
-      <div class="panel-title">Borders &amp; Background</div>
-
-      <div class="row">
-        <label for="borderStyle" style="width:90px;">Border</label>
-        <select id="borderStyle">
-          <option value="border-none">None</option>
-          <option value="border-simple">Simple</option>
-          <option value="border-candy">Candy Dash</option>
-          <option value="border-dotted">Playful Dots</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <label for="bgUpload" style="width:90px;">Background</label>
-        <input
-          id="bgUpload"
-          type="file"
-          accept="image/png,image/svg+xml,image/jpeg"
-          class="file-input"
-        />
-      </div>
-
-      <div class="row">
-        <label for="bgOpacity" style="width:90px;">Transparency</label>
-        <input
-          id="bgOpacity"
-          type="range"
-          min="0"
-          max="100"
-          value="20"
-          class="slider"
-        />
-      </div>
-
-      <button id="resetBg" class="btn btn-gray" type="button">
-        Reset Background
-      </button>
-    </div>
-
-    <!-- Data & Export -->
-    <div class="panel">
-      <div class="panel-title">Data &amp; Export</div>
-
-      <button id="cleanBtn" class="btn btn-gray" type="button">
-        🧹 Clean &amp; Sort Words
-      </button>
-      <button id="generateBtn" class="btn btn-blue" type="button">
-        🎯 Generate Game
-      </button>
-      <button id="downloadBtn" class="btn btn-green" type="button">
-        📄 Download PDF
-      </button>
-
-      <label for="pageSize">Print Size</label>
-      <select id="pageSize">
-        <option value="letter">8.5 x 11&quot; (Letter)</option>
-        <option value="6x9">6 x 9&quot;</option>
-        <option value="8x10">8 x 10&quot;</option>
-      </select>
-
-      <div class="checkbox-row">
-        <input type="checkbox" id="includeAnswer" checked />
-        <label for="includeAnswer" style="margin-bottom:0;">Include Answer Key</label>
-      </div>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="preview-toolbar">
-      <span class="toolbar-label">Layout Tools:</span>
-      <button id="gridToggle" class="btn btn-gray btn-small" type="button">
-        🧮 Grid Overlay
-      </button>
-      <span class="toolbar-label">Grid:</span>
-      <button id="gridZoomIn" class="btn btn-gray btn-small" type="button">
-        🔍 +
-      </button>
-      <button id="gridZoomOut" class="btn btn-gray btn-small" type="button">
-        🔍 -
-      </button>
-      <input
-        id="gridOpacity"
-        type="range"
-        min="0"
-        max="100"
-        value="20"
-        class="slider"
-        style="width:100px;"
-      />
-      <span class="toolbar-label">Swap / Shuffle:</span>
-      <button id="toolbarSwap" class="btn btn-gray btn-small" type="button">
-        ↔️ Swap
-      </button>
-      <button id="toolbarShuffle" class="btn btn-gray btn-small" type="button">
-        🎲 Shuffle
-      </button>
-    </div>
-
-    <div class="preview-wrapper">
-      <div class="preview-page" id="previewPage">
-        <div id="previewBg" class="preview-bg"></div>
-        <div id="previewBorder" class="preview-border border-none"></div>
-        <div id="gridOverlay" class="grid-overlay"></div>
-
-        <div class="page-content">
-          <div id="gameTitle" class="game-title">CANDY MATCH</div>
-          <div id="gameSubtitle" class="game-subtitle">
-            Match the clue to the candy it describes!
-          </div>
-
-          <div id="gameBody" class="game-body">
-            <div id="cluesColumn" class="clues-wrapper"></div>
-            <div id="answersColumn" class="answers-list"></div>
-          </div>
-
-          <div class="answer-key" id="answerKey">
-            <h4>Answer Key</h4>
-            <div class="answer-key-row" id="answerKeyRow"></div>
-          </div>
+  <div class="app-shell">
+    <!-- LEFT: CONTROL PANEL -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="tool-tier">Pro Plus • Candy Match Generator</div>
+        <div class="tool-title">
+          🍬 Candy Match
+          <span class="badge-proplus">👑 Pro Plus</span>
         </div>
       </div>
-    </div>
-  </main>
+
+      <div class="sidebar-scroll">
+        <section class="panel">
+          <h3>Theme & Style</h3>
+          <label for="themeInput">Theme / Topic</label>
+          <input
+            id="themeInput"
+            type="text"
+            placeholder="e.g. Bible Verses, Halloween, Christmas"
+          />
+
+          <label for="styleSelect" style="margin-top: 8px;">Style / Audience</label>
+          <select id="styleSelect">
+            <option value="kids">Kids (Themed)</option>
+            <option value="family">Family / Church</option>
+            <option value="party">Party / Youth Group</option>
+          </select>
+
+          <label for="candyLocale" style="margin-top: 8px;">Candy Locale (Pro Plus)</label>
+          <select id="candyLocale">
+            <option value="us">USA Candy Names</option>
+            <option value="uk">UK Candy Names</option>
+          </select>
+
+          <div class="toggle-row" style="margin-top: 10px;">
+            <span>
+              ⭐ Bonus Bible Cross-Match
+              <span class="badge-locked">Pro Plus</span>
+            </span>
+            <div id="crossMatchToggle" class="toggle toggle-active">
+              <div class="toggle-thumb"></div>
+            </div>
+          </div>
+          <div class="small-note">
+            Mix Bible verses with any niche (Christmas, Halloween, Harvest, etc.).
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Manual Word List</h3>
+          <label for="wordList">Enter / paste / upload words</label>
+          <textarea
+            id="wordList"
+            placeholder="One clue word per line. Pro Plus can auto-fill up to 20 lines into the game layout."
+          ></textarea>
+          <div class="small-note">
+            Tip: Type a theme above and paste related terms here (e.g. PUMPKIN, CANDY,
+            GHOST...). Uploading a .txt file will append to this list.
+          </div>
+
+          <div class="row-inline" style="margin-top: 10px;">
+            <button id="uploadTxtBtn" class="btn btn-ghost btn-small">
+              ⬆️ Upload .txt
+            </button>
+            <button id="cleanSortBtn" class="btn btn-ghost btn-small">
+              🧹 Clean & Sort
+            </button>
+          </div>
+
+          <input
+            type="file"
+            id="hiddenFileInput"
+            accept=".txt"
+            style="display:none"
+          />
+
+          <div class="small-note">
+            Pro Plus: up to 100 words stored; up to 20 auto-filled into a puzzle.
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Game Layout</h3>
+          <label for="titleInput">Game Title</label>
+          <input id="titleInput" type="text" value="CANDY MATCH" />
+
+          <label for="subtitleInput" style="margin-top: 6px;">Subtitle</label>
+          <input
+            id="subtitleInput"
+            type="text"
+            value="Match the clue to the candy it describes!"
+          />
+
+          <div class="checkbox-row" style="margin-top: 8px;">
+            <input type="checkbox" id="gridOverlayCheckbox" />
+            <label for="gridOverlayCheckbox" style="margin-bottom: 0;"
+              >Grid overlay (design alignment)</label
+            >
+          </div>
+
+          <div class="color-input-row">
+            <span>Answer key color</span>
+            <input type="color" id="answerColorPicker" value="#c81e1e" />
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Generate & Export</h3>
+          <div class="row-inline">
+            <button id="generateBtn" class="btn btn-primary">
+              🎯 Generate Game
+            </button>
+            <button id="printBtn" class="btn btn-green">
+              ⬇️ Print / PDF
+            </button>
+          </div>
+          <div class="small-note" style="margin-top: 6px;">
+            “Print / PDF” opens your browser’s print dialog. Choose “Save as PDF” to
+            download both pages.
+          </div>
+        </section>
+      </div>
+    </aside>
+
+    <!-- RIGHT: PREVIEW -->
+    <main class="preview-shell">
+      <div class="preview-header">
+        <div class="preview-header-title">Preview • Game & Answer Key</div>
+        <div class="preview-actions">
+          <button id="quickRegenerateBtn" class="btn btn-ghost btn-small">
+            🔁 Shuffle Only
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-area" id="previewArea">
+        <div class="page-stack">
+          <section class="page" id="gamePage">
+            <div contenteditable="true" class="editable" id="titleDisplayWrapper">
+              <h1 id="gameTitle">CANDY MATCH</h1>
+            </div>
+            <div
+              contenteditable="true"
+              class="subtitle editable"
+              id="subtitleDisplay"
+            >
+              Match the clue to the candy it describes!
+            </div>
+
+            <div class="page-main">
+              <div class="clue-list" id="clueList"></div>
+              <div class="candy-list" id="candyList"></div>
+            </div>
+
+            <div class="page-footer">
+              Pro Plus Edition – fully editable layout
+            </div>
+            <div class="page-label">Page 1 – Game</div>
+          </section>
+
+          <section class="page answer-key-page" id="answerPage">
+            <h1 id="answerTitle">CANDY MATCH</h1>
+            <h2 id="answerKeyHeading">ANSWER KEY</h2>
+
+            <div class="answer-key-wrap">
+              <div class="clue-list" id="answerClueList"></div>
+              <div class="candy-list" id="answerCandyList"></div>
+            </div>
+
+            <div class="page-footer">
+              Answer key generated automatically from the current game layout.
+            </div>
+            <div class="page-label">Page 2 – Answer Key</div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
 
   <script>
-    function shuffle(arr) {
+    // ---------- BASIC DATA ----------
+
+    const usCandy = [
+      "Skittles",
+      "Butterfinger",
+      "PayDay",
+      "Life Savers",
+      "Reese\u2019s Pieces",
+      "Milky Way",
+      "Snickers",
+      "Kit Kat",
+      "100 Grand",
+      "Twix",
+      "Baby Ruth",
+      "Hershey\u2019s Kiss",
+      "M&M\u2019s",
+      "Starburst",
+      "Tootsie Pop",
+      "Sour Patch Kids",
+      "Hot Tamales",
+      "Jolly Rancher",
+      "Almond Joy",
+      "Nerds"
+    ];
+
+    const ukCandy = [
+      "Mars Bar",
+      "Galaxy",
+      "Smarties",
+      "Maltesers",
+      "Double Decker",
+      "Crunchie",
+      "Topic",
+      "Lion Bar",
+      "Aero",
+      "Twirl",
+      "Flake",
+      "Boost",
+      "Wispa",
+      "Dairy Milk",
+      "Fruit Pastilles",
+      "Wine Gums",
+      "Jelly Babies",
+      "Toffee Crisp",
+      "Curly Wurly",
+      "Flying Saucers"
+    ];
+
+    // Sample Bible cross-match sets so the feature is immediately playable.
+    const bibleCrossSets = {
+      halloween: {
+        terms: [
+          "PUMPKIN",
+          "CANDY",
+          "GHOST",
+          "LANTERN",
+          "BAT",
+          "FEAR",
+          "SPIDER",
+          "AUTUMN",
+          "MASK",
+          "SEASON",
+          "BREEZE",
+          "SNAKE"
+        ],
+        verses: [
+          "LEVITICUS 11:18",
+          "2 TIMOTHY 1:7",
+          "PSALM 119:103",
+          "JEREMIAH 5:24",
+          "DANIEL 2:21",
+          "JOHN 3:8",
+          "GENESIS 1:29",
+          "LUKE 12:2",
+          "MATTHEW 5:15",
+          "NUMBERS 21:9",
+          "LUKE 24:39",
+          "JOB 8:14"
+        ]
+      },
+      harvest: {
+        terms: [
+          "TURKEY",
+          "FEAST",
+          "LEAVES",
+          "FAMILY",
+          "HARVEST",
+          "PROVISION",
+          "FRIENDS",
+          "AUTUMN",
+          "BLESSINGS",
+          "SEASON",
+          "BREEZE",
+          "FIELD"
+        ],
+        verses: [
+          "LUKE 10:2",
+          "PHILIPPIANS 4:19",
+          "REVELATION 19:9",
+          "JEREMIAH 5:24",
+          "PSALM 65:9",
+          "JOHN 3:8",
+          "MATTHEW 6:26",
+          "JAMES 1:17",
+          "GENESIS 2:24",
+          "LEVITICUS 19:19",
+          "PSALM 1:3",
+          "PROVERBS 18:24"
+        ]
+      }
+    };
+
+    const FREE_LINES = 10; // concept only; here Pro Plus uses up to 20
+    const PROPLUS_LINES = 20;
+
+    // ---------- HELPERS ----------
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function shuffle(array) {
+      const arr = array.slice();
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -798,492 +829,347 @@
       return arr;
     }
 
-    async function fetchWordsFromDatamuse(theme, limit) {
-      if (!theme) return [];
-      const url =
-        "https://api.datamuse.com/words?ml=" +
-        encodeURIComponent(theme) +
-        "&max=" +
-        encodeURIComponent(limit);
-      try {
-        const res = await fetch(url);
-        if (!res.ok) return [];
-        const data = await res.json();
-        return data
-          .map((d) => (d.word || "").replace(/_/g, " "))
-          .filter(Boolean);
-      } catch (e) {
-        console.error(e);
-        return [];
-      }
-    }
-
-    const defaultCandies = [
-      "Skittles",
-      "Butterfinger",
-      "PayDay",
-      "Reese\u2019s Pieces",
-      "Life Savers",
-      "Snickers",
-      "Kit Kat",
-      "Milky Way",
-      "M&M\u2019s",
-      "100 Grand",
-      "Twix",
-      "Hershey\u2019s Kiss",
-      "Tootsie Roll",
-      "Starburst",
-      "Almond Joy"
-    ];
-
-    // DOM references
-    const modeToggle = document.getElementById("modeToggle");
-    const themeInput = document.getElementById("themeInput");
-    const styleSelect = document.getElementById("styleSelect");
-    const crossMatchToggle = document.getElementById("crossMatchToggle");
-    const bibleTheme = document.getElementById("bibleTheme");
-    const secondaryTheme = document.getElementById("secondaryTheme");
-    const bibleThemeLabel = document.getElementById("bibleThemeLabel");
-    const secondaryThemeLabel = document.getElementById("secondaryThemeLabel");
-    const manualList = document.getElementById("manualList");
-    const uploadTxt = document.getElementById("uploadTxt");
-
-    const titleInput = document.getElementById("titleInput");
-    const subtitleInput = document.getElementById("subtitleInput");
-    const fontSelect = document.getElementById("fontSelect");
-    const titleSize = document.getElementById("titleSize");
-    const fillColor = document.getElementById("fillColor");
-    const outlineColor = document.getElementById("outlineColor");
-    const shadowToggle = document.getElementById("shadowToggle");
-    const swapColumns = document.getElementById("swapColumns");
-    const showNumbers = document.getElementById("showNumbers");
-    const lineStyle = document.getElementById("lineStyle");
-    const lineSpacing = document.getElementById("lineSpacing");
-    const rowCount = document.getElementById("rowCount");
-    const shuffleBtn = document.getElementById("shuffleBtn");
-
-    const borderStyle = document.getElementById("borderStyle");
-    const bgUpload = document.getElementById("bgUpload");
-    const bgOpacity = document.getElementById("bgOpacity");
-    const resetBg = document.getElementById("resetBg");
-
-    const cleanBtn = document.getElementById("cleanBtn");
-    const generateBtn = document.getElementById("generateBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const pageSize = document.getElementById("pageSize");
-    const includeAnswer = document.getElementById("includeAnswer");
-
-    const gameTitle = document.getElementById("gameTitle");
-    const gameSubtitle = document.getElementById("gameSubtitle");
-    const gameBody = document.getElementById("gameBody");
-    const cluesColumn = document.getElementById("cluesColumn");
-    const answersColumn = document.getElementById("answersColumn");
-    const answerKeyRow = document.getElementById("answerKeyRow");
-
-    const previewBorder = document.getElementById("previewBorder");
-    const previewBg = document.getElementById("previewBg");
-    const gridOverlay = document.getElementById("gridOverlay");
-    const gridToggle = document.getElementById("gridToggle");
-    const gridZoomIn = document.getElementById("gridZoomIn");
-    const gridZoomOut = document.getElementById("gridZoomOut");
-    const gridOpacity = document.getElementById("gridOpacity");
-    const toolbarSwap = document.getElementById("toolbarSwap");
-    const toolbarShuffle = document.getElementById("toolbarShuffle");
-
-    let currentClues = [];
-    let currentAnswers = [];
-    let dragTarget = null;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
-    let gridVisible = false;
-
-    // Dark / light UI toggle
-    modeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-    });
-
-    // Title styling
-    function applyTitleStyle() {
-      const t = titleInput.value.trim() || "Candy Match";
-      const s =
-        subtitleInput.value.trim() || "Match the clue to the candy it describes!";
-      gameTitle.textContent = t.toUpperCase();
-      gameSubtitle.textContent = s;
-
-      gameTitle.style.fontFamily = fontSelect.value;
-      gameSubtitle.style.fontFamily = fontSelect.value;
-
-      gameTitle.style.fontSize = titleSize.value + "px";
-      gameTitle.style.color = fillColor.value;
-      gameTitle.style.webkitTextStroke = "1px " + outlineColor.value;
-      gameTitle.style.textShadow = shadowToggle.checked
-        ? "0 1px 0 rgba(0,0,0,0.35)"
-        : "none";
-    }
-
-    [titleInput, subtitleInput, fontSelect, titleSize, fillColor, outlineColor].forEach(
-      (el) => el.addEventListener("input", applyTitleStyle)
-    );
-    shadowToggle.addEventListener("change", applyTitleStyle);
-    applyTitleStyle();
-
-    // Draggable titles
-    function makeDraggable(el) {
-      el.addEventListener("mousedown", (e) => {
-        const rect = el.getBoundingClientRect();
-        const pageRect = document.getElementById("previewPage").getBoundingClientRect();
-        dragTarget = el;
-        dragOffsetX = e.clientX - rect.left;
-        dragOffsetY = e.clientY - rect.top;
-        document.addEventListener("mousemove", onDragMove);
-        document.addEventListener("mouseup", onDragEnd);
-      });
-    }
-
-    function onDragMove(e) {
-      if (!dragTarget) return;
-      const pageRect = document.getElementById("previewPage").getBoundingClientRect();
-      const x = e.clientX - pageRect.left - dragOffsetX;
-      const y = e.clientY - pageRect.top - dragOffsetY;
-      dragTarget.style.position = "absolute";
-      dragTarget.style.left = x + "px";
-      dragTarget.style.top = y + "px";
-      dragTarget.style.transform = "none";
-    }
-
-    function onDragEnd() {
-      dragTarget = null;
-      document.removeEventListener("mousemove", onDragMove);
-      document.removeEventListener("mouseup", onDragEnd);
-    }
-
-    makeDraggable(gameTitle);
-    makeDraggable(gameSubtitle);
-
-    // Layout controls
-    lineSpacing.addEventListener("input", () => {
-      document.documentElement.style.setProperty(
-        "--row-gap",
-        lineSpacing.value + "px"
-      );
-    });
-
-    swapColumns.addEventListener("change", () => {
-      gameBody.classList.toggle("swap", swapColumns.checked);
-    });
-
-    toolbarSwap.addEventListener("click", () => {
-      swapColumns.checked = !swapColumns.checked;
-      gameBody.classList.toggle("swap", swapColumns.checked);
-    });
-
-    showNumbers.addEventListener("change", () => {
-      const rows = document.querySelectorAll(".clue-row");
-      rows.forEach((row) => {
-        if (showNumbers.checked) row.classList.remove("hide-nums");
-        else row.classList.add("hide-nums");
-      });
-    });
-
-    lineStyle.addEventListener("change", () => {
-      const lines = document.querySelectorAll(".clue-line");
-      lines.forEach((line) => {
-        if (lineStyle.value === "dotted") line.classList.add("dotted");
-        else line.classList.remove("dotted");
-      });
-    });
-
-    // Borders & Background
-    borderStyle.addEventListener("change", () => {
-      previewBorder.className = "preview-border " + borderStyle.value;
-    });
-
-    bgOpacity.addEventListener("input", () => {
-      previewBg.style.opacity = bgOpacity.value / 100;
-    });
-
-    bgUpload.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        previewBg.style.backgroundImage = `url(${ev.target.result})`;
-        previewBg.style.opacity = bgOpacity.value / 100;
-      };
-      reader.readAsDataURL(file);
-    });
-
-    resetBg.addEventListener("click", () => {
-      previewBg.style.backgroundImage = "none";
-      previewBg.style.opacity = 0;
-    });
-
-    // Grid overlay
-    gridToggle.addEventListener("click", () => {
-      gridVisible = !gridVisible;
-      gridOverlay.style.display = gridVisible ? "block" : "none";
-      gridToggle.textContent = gridVisible
-        ? "❌ Remove Grid Overlay"
-        : "🧮 Grid Overlay";
-    });
-
-    gridZoomIn.addEventListener("click", () => {
-      let size = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue("--grid-size"),
-        10
-      );
-      size = Math.max(8, size - 4);
-      document.documentElement.setProperty
-        ? document.documentElement.setProperty("--grid-size", size + "px")
-        : document.documentElement.style.setProperty("--grid-size", size + "px");
-    });
-
-    gridZoomOut.addEventListener("click", () => {
-      let size = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue("--grid-size"),
-        10
-      );
-      size = Math.min(80, size + 4);
-      document.documentElement.style.setProperty("--grid-size", size + "px");
-    });
-
-    gridOpacity.addEventListener("input", () => {
-      document.documentElement.style.setProperty(
-        "--grid-opacity",
-        gridOpacity.value / 100
-      );
-    });
-
-    // Cross-match toggle
-    crossMatchToggle.addEventListener("change", () => {
-      const on = crossMatchToggle.checked;
-      bibleTheme.style.display = on ? "block" : "none";
-      bibleThemeLabel.style.display = on ? "block" : "none";
-      secondaryTheme.style.display = on ? "block" : "none";
-      secondaryThemeLabel.style.display = on ? "block" : "none";
-
-      if (!on) {
-        titleInput.value = "Candy Match";
-        subtitleInput.value = "Match the clue to the candy it describes!";
-        applyTitleStyle();
-      }
-    });
-
-    // Parsing manual words
-    function parseManualWords() {
-      const text = manualList.value || "";
+    function cleanWordList(text) {
       return text
         .split(/\r?\n/)
-        .map((w) => w.trim())
-        .filter(Boolean);
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0);
     }
 
-    uploadTxt.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const lines = ev.target.result
-          .split(/\r?\n/)
-          .map((l) => l.trim())
-          .filter(Boolean);
-        if (!lines.length) return;
-        manualList.value = lines.join("\n");
-      };
-      reader.readAsText(file);
-    });
+    function getCandyList() {
+      const locale = $("candyLocale").value || "us";
+      return locale === "uk" ? ukCandy.slice() : usCandy.slice();
+    }
 
-    // Build game
-    function buildGame(clues, answers) {
-      const n = Math.min(
-        parseInt(rowCount.value, 10) || 10,
-        clues.length,
-        answers.length
+    function getCrossSetFromTheme(theme, style) {
+      const t = (theme || "").toLowerCase();
+      if (t.includes("harvest") || t.includes("thanksgiving")) {
+        return bibleCrossSets.harvest;
+      }
+      if (t.includes("halloween") || style === "party") {
+        return bibleCrossSets.halloween;
+      }
+      // default: halloween-style cross-match
+      return bibleCrossSets.halloween;
+    }
+
+    // ---------- STATE ----------
+
+    let currentPairs = []; // [{number, clue, letter, candy, verse?}]
+    let currentMode = "candy"; // "candy" or "cross"
+
+    // ---------- GENERATION LOGIC ----------
+
+    function generateGame({ shuffleOnly = false } = {}) {
+      const theme = $("themeInput").value.trim();
+      const style = $("styleSelect").value;
+
+      const crossMatchOn = $("crossMatchToggle").classList.contains(
+        "toggle-active"
       );
 
-      currentClues = clues.slice(0, n);
-      currentAnswers = answers.slice(0, n);
+      currentMode = crossMatchOn ? "cross" : "candy";
 
-      cluesColumn.innerHTML = "";
-      answersColumn.innerHTML = "";
-      answerKeyRow.innerHTML = "";
+      // Title / subtitle from inputs
+      const titleInput = $("titleInput").value.trim();
+      const subtitleInput = $("subtitleInput").value.trim();
 
-      const usedClues = currentClues.slice();
-      const shuffledAnswers = shuffle(currentAnswers.slice());
+      $("gameTitle").textContent =
+        titleInput || (crossMatchOn ? "BIBLE MATCH" : "CANDY MATCH");
+      $("answerTitle").textContent = $("gameTitle").textContent;
+      $("subtitleDisplay").textContent =
+        subtitleInput ||
+        (crossMatchOn
+          ? "Match the terms with their related Bible verse below."
+          : "Match the clue to the candy it describes!");
+
+      $("answerKeyHeading").textContent = "ANSWER KEY";
+
+      let clues = [];
+      let extras = [];
+
+      if (crossMatchOn) {
+        // Bible Cross-Match mode: terms + verses
+        const set = getCrossSetFromTheme(theme, style);
+        clues = set.terms.slice(0, PROPLUS_LINES);
+        extras = set.verses.slice(0, PROPLUS_LINES);
+      } else {
+        // Normal candy match: clues from manual list, candies from locale
+        const manual = cleanWordList($("wordList").value);
+        if (!manual.length) {
+          // Provide a soft default set based on theme
+          const fallback =
+            theme.toLowerCase().includes("bible") ||
+            theme.toLowerCase().includes("verse")
+              ? [
+                  "GOOD BOOK",
+                  "HOLY WRIT",
+                  "SCRIPTURE",
+                  "WORD OF GOD",
+                  "WORD",
+                  "HOLY SCRIPTURE",
+                  "GOSPEL",
+                  "BIBLICAL",
+                  "TORAH",
+                  "SACRED"
+                ]
+              : [
+                  "HOLIDAY HAPPINESS",
+                  "LOTS OF GIFTS",
+                  "REINDEER BREAK",
+                  "STAR OF BETHLEHEM",
+                  "MISCHIEVOUS ELVES",
+                  "NORTH POLE",
+                  "SHEPHERD'S STAFF",
+                  "SANTA'S SLEIGH",
+                  "SNOWMAN POOP",
+                  "COWBOY SANTA"
+                ];
+          clues = fallback.slice(0, PROPLUS_LINES);
+        } else {
+          clues = manual.slice(0, PROPLUS_LINES);
+        }
+        extras = getCandyList();
+      }
+
+      // ensure we have at least as many extras as clues
+      const needed = clues.length;
+      let rightSide = shuffle(extras).slice(0, Math.max(needed, 10));
+      if (rightSide.length < needed) {
+        // pad from candy/bible list reused
+        const more = shuffle(extras);
+        while (rightSide.length < needed) {
+          rightSide.push(more[rightSide.length % more.length]);
+        }
+      }
+
+      // letters A, B, C...
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-      const answerPairs = [];
 
-      for (let i = 0; i < n; i++) {
+      // Build pairs
+      const indices = [...Array(clues.length).keys()];
+      const shuffledIndices = shuffle(indices);
+
+      currentPairs = clues.map((clue, idx) => {
+        const candyIndex = shuffledIndices[idx];
+        return {
+          number: idx + 1,
+          clue,
+          letter: letters[idx],
+          rightText: rightSide[candyIndex]
+        };
+      });
+
+      renderPages();
+    }
+
+    function renderPages() {
+      const clueListEl = $("clueList");
+      const candyListEl = $("candyList");
+      const answerClueListEl = $("answerClueList");
+      const answerCandyListEl = $("answerCandyList");
+
+      clueListEl.innerHTML = "";
+      candyListEl.innerHTML = "";
+      answerClueListEl.innerHTML = "";
+      answerCandyListEl.innerHTML = "";
+
+      const answerColor = $("answerColorPicker").value || "#c81e1e";
+      document.documentElement.style.setProperty(
+        "--answer-color",
+        answerColor
+      );
+
+      // Right column uses same order for both pages
+      const rightItems = currentPairs.map((p) => p.rightText);
+      const letters = currentPairs.map((p) => p.letter);
+
+      // --- Game page ---
+      currentPairs.forEach((pair) => {
+        const clueRow = document.createElement("div");
+        clueRow.className = "clue-row";
+
+        const blank = document.createElement("span");
+        blank.className = "blank";
+
+        const number = document.createElement("span");
+        number.className = "number";
+        number.textContent = pair.number + ".";
+
+        const clueText = document.createElement("span");
+        clueText.className = "clue-text editable";
+        clueText.textContent = pair.clue;
+
+        clueText.contentEditable = "true";
+        clueText.addEventListener("input", () => {
+          pair.clue = clueText.textContent.trim();
+          renderAnswerPageOnly();
+        });
+
+        clueRow.appendChild(blank);
+        clueRow.appendChild(number);
+        clueRow.appendChild(clueText);
+        clueListEl.appendChild(clueRow);
+      });
+
+      rightItems.forEach((text, idx) => {
+        const row = document.createElement("div");
+        row.className = "candy-row";
+
+        const letterSpan = document.createElement("span");
+        letterSpan.className = "candy-letter";
+        letterSpan.textContent = letters[idx] + ".";
+
+        const textSpan = document.createElement("span");
+        textSpan.className = "candy-text editable";
+        textSpan.textContent = text;
+        textSpan.contentEditable = "true";
+        textSpan.addEventListener("input", () => {
+          const newText = textSpan.textContent.trim();
+          currentPairs.forEach((p, i) => {
+            if (i === idx) {
+              p.rightText = newText;
+            }
+          });
+          renderAnswerPageOnly();
+        });
+
+        row.appendChild(letterSpan);
+        row.appendChild(textSpan);
+        candyListEl.appendChild(row);
+      });
+
+      renderAnswerPageOnly();
+    }
+
+    function renderAnswerPageOnly() {
+      const answerClueListEl = $("answerClueList");
+      const answerCandyListEl = $("answerCandyList");
+      answerClueListEl.innerHTML = "";
+      answerCandyListEl.innerHTML = "";
+
+      const answerColor = $("answerColorPicker").value || "#c81e1e";
+      document.documentElement.style.setProperty(
+        "--answer-color",
+        answerColor
+      );
+
+      const letters = currentPairs.map((p) => p.letter);
+      const rightItems = currentPairs.map((p) => p.rightText);
+
+      // Left side: same clue text, but with letter above blank
+      currentPairs.forEach((pair) => {
         const row = document.createElement("div");
         row.className = "clue-row";
 
-        const num = document.createElement("span");
-        num.className = "clue-num";
-        num.textContent = (i + 1) + ".";
-        row.appendChild(num);
+        const blank = document.createElement("span");
+        blank.className = "blank answer";
 
-        const clueSpan = document.createElement("span");
-        clueSpan.textContent = usedClues[i];
-        row.appendChild(clueSpan);
+        const letterSpan = document.createElement("span");
+        letterSpan.className = "answer-letter";
+        letterSpan.textContent = pair.letter;
+        blank.appendChild(letterSpan);
 
-        const line = document.createElement("div");
-        line.className = "clue-line";
-        if (lineStyle.value === "dotted") line.classList.add("dotted");
-        row.appendChild(line);
+        const number = document.createElement("span");
+        number.className = "number";
+        number.textContent = pair.number + ".";
 
-        if (!showNumbers.checked) row.classList.add("hide-nums");
+        const clueText = document.createElement("span");
+        clueText.className = "clue-text";
+        clueText.textContent = pair.clue;
 
-        cluesColumn.appendChild(row);
-      }
+        row.appendChild(blank);
+        row.appendChild(number);
+        row.appendChild(clueText);
+        answerClueListEl.appendChild(row);
+      });
 
-      for (let i = 0; i < n; i++) {
-        const wrap = document.createElement("div");
-        const label = document.createElement("span");
-        label.className = "answer-label";
-        label.textContent = letters[i] + ".";
-        const t = document.createElement("span");
-        t.textContent = " " + shuffledAnswers[i];
-        wrap.appendChild(label);
-        wrap.appendChild(t);
-        answersColumn.appendChild(wrap);
+      // Right side: A. Candy Name (reference list)
+      rightItems.forEach((text, idx) => {
+        const row = document.createElement("div");
+        row.className = "candy-row";
 
-        answerPairs.push({
-          number: i + 1,
-          letter: letters[i],
-          candy: shuffledAnswers[i]
-        });
-      }
+        const letterSpan = document.createElement("span");
+        letterSpan.className = "candy-letter";
+        letterSpan.textContent = letters[idx] + ".";
 
-      if (includeAnswer.checked) {
-        answerPairs.forEach((p) => {
-          const span = document.createElement("span");
-          span.textContent = p.number + " → " + p.letter;
-          answerKeyRow.appendChild(span);
-        });
-      }
+        const textSpan = document.createElement("span");
+        textSpan.className = "candy-text";
+        textSpan.textContent = text;
+
+        row.appendChild(letterSpan);
+        row.appendChild(textSpan);
+        answerCandyListEl.appendChild(row);
+      });
     }
 
-    // Generate & Clean
-    cleanBtn.addEventListener("click", () => {
-      if (
-        !themeInput.value.trim() &&
-        !manualList.value.trim() &&
-        !bibleTheme.value.trim() &&
-        !secondaryTheme.value.trim()
-      ) {
-        alert("Enter a theme/topic, manual words, or Bible + secondary theme first.");
-        return;
-      }
-      generateBtn.click();
+    // ---------- EVENT WIRING ----------
+
+    $("generateBtn").addEventListener("click", () => generateGame());
+    $("quickRegenerateBtn").addEventListener("click", () =>
+      generateGame({ shuffleOnly: true })
+    );
+
+    $("answerColorPicker").addEventListener("input", () =>
+      renderAnswerPageOnly()
+    );
+
+    $("gridOverlayCheckbox").addEventListener("change", (e) => {
+      const on = e.target.checked;
+      $("gamePage").classList.toggle("grid-overlay", on);
+      $("answerPage").classList.toggle("grid-overlay", on);
     });
 
-    generateBtn.addEventListener("click", async () => {
-      const style = styleSelect.value;
-      const baseLimit = style === "kids" ? 12 : 15;
-
-      let clues = [];
-      let answers = [];
-
-      const manual = parseManualWords();
-
-      if (crossMatchToggle.checked) {
-        const bibleTopic = bibleTheme.value.trim() || "bible verse";
-        const secondary = secondaryTheme.value.trim() || "harvest";
-
-        const [bibleWords, otherWords] = await Promise.all([
-          fetchWordsFromDatamuse(bibleTopic, baseLimit),
-          fetchWordsFromDatamuse(secondary, baseLimit)
-        ]);
-
-        const bibleClues =
-          bibleWords.length > 0
-            ? bibleWords.map((w) => w.toUpperCase())
-            : [
-                "LUKE 10:2",
-                "PSALM 65:11",
-                "PSALM 8:3-4",
-                "ECCLESIASTES 3:4",
-                "PROVERBS 10:5"
-              ];
-
-        const otherList =
-          manual.length > 0
-            ? manual.map((w) => w.toUpperCase())
-            : otherWords.length
-            ? otherWords.map((w) => w.toUpperCase())
-            : [
-                "HARVEST FESTIVAL",
-                "BASKET OF FRUITS",
-                "OLIVES",
-                "AUTUMN LEAVES",
-                "SWEET TREATS"
-              ];
-
-        clues = bibleClues;
-        answers = otherList;
-
-        const themeText = (secondaryTheme.value.trim() || "Harvest").toUpperCase();
-        titleInput.value = "Bible " + themeText + " Match";
-        subtitleInput.value =
-          "Match the terms with their " +
-          themeText.toLowerCase() +
-          " related verse below.";
-        applyTitleStyle();
-      } else {
-        const theme = themeInput.value.trim();
-        if (!theme && !manual.length) {
-          alert("Enter a theme/topic or some manual words first.");
-          return;
-        }
-
-        const aiWords = theme
-          ? await fetchWordsFromDatamuse(theme, baseLimit)
-          : [];
-        const combined = manual.concat(
-          aiWords.map((w) =>
-            w
-              .replace(/\s+/g, " ")
-              .trim()
-              .toUpperCase()
-          )
-        );
-
-        clues = combined.length
-          ? Array.from(new Set(combined))
-          : ["SANTA'S DRINK", "CHRISTMAS SHOPPING", "SNOWMAN", "GIFT LIST"];
-
-        answers = defaultCandies.slice();
-        if (!titleInput.value.trim()) {
-          titleInput.value = theme ? theme + " Candy Match" : "Candy Match";
-          applyTitleStyle();
-        }
-      }
-
-      buildGame(clues, answers);
+    $("crossMatchToggle").addEventListener("click", () => {
+      $("crossMatchToggle").classList.toggle("toggle-active");
+      generateGame();
     });
 
-    shuffleBtn.addEventListener("click", () => {
-      if (!currentClues.length || !currentAnswers.length) {
-        generateBtn.click();
-        return;
-      }
-      buildGame(currentClues, currentAnswers);
+    $("uploadTxtBtn").addEventListener("click", () => {
+      $("hiddenFileInput").click();
     });
 
-    toolbarShuffle.addEventListener("click", () => {
-      shuffleBtn.click();
+    $("hiddenFileInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const existing = $("wordList").value;
+        const added = evt.target.result || "";
+        $("wordList").value =
+          (existing ? existing + "\n" : "") + added.trim();
+      };
+      reader.readAsText(file);
+      e.target.value = "";
     });
 
-    downloadBtn.addEventListener("click", () => {
+    $("cleanSortBtn").addEventListener("click", () => {
+      const cleaned = Array.from(
+        new Set(cleanWordList($("wordList").value.toUpperCase()))
+      ).sort();
+      $("wordList").value = cleaned.join("\n");
+    });
+
+    $("titleInput").addEventListener("input", () => {
+      $("gameTitle").textContent =
+        $("titleInput").value.trim() || "CANDY MATCH";
+      $("answerTitle").textContent = $("gameTitle").textContent;
+    });
+
+    $("subtitleInput").addEventListener("input", () => {
+      $("subtitleDisplay").textContent =
+        $("subtitleInput").value.trim() ||
+        (currentMode === "cross"
+          ? "Match the terms with their related Bible verse below."
+          : "Match the clue to the candy it describes!");
+    });
+
+    $("printBtn").addEventListener("click", () => {
       window.print();
     });
 
-    // Initial filler
-    buildGame(
-      ["LUKE 9:24", "PROVERBS 24:26", "GENESIS 9:15", "MARK 1:17", "PSALM 18:2"],
-      defaultCandies
-    );
+    // Initial generation
+    generateGame();
   </script>
 </body>
 </html>
